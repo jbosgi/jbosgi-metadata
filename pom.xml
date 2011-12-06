@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ====================================================================== -->
+<!-- -->
+<!-- JBoss, the OpenSource J2EE webOS -->
+<!-- -->
+<!-- Distributable under LGPL license. -->
+<!-- See terms of license at http://www.gnu.org. -->
+<!-- -->
+<!-- ====================================================================== -->
+
+<!-- $Id$ -->
+
+<!-- Set these VM properties in your IDE debugger -Dlog4j.output.dir=${workspace_loc:jboss-osgi-framework/target} -Dlog4j.configuration=log4j-console.xml -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.jboss.osgi</groupId>
+        <artifactId>jboss-osgi-parent</artifactId>
+        <version>1.0.10</version>
+    </parent>
+
+    <name>JBossOSGi Resolver Metadata</name>
+    <groupId>org.jboss.osgi.metadata</groupId>
+    <artifactId>jbosgi-metadata</artifactId>
+    <packaging>jar</packaging>
+
+    <version>2.0.0-SNAPSHOT</version>
+
+    <!-- Source -->
+    <scm>
+        <connection>scm:git:git://github.com/tdiesler/jbosgi-metadata.git</connection>
+        <developerConnection>scm:git:git@github.com:tdiesler/jbosgi-metadata.git</developerConnection>
+        <url>http://github.com/tdiesler/jbosgi-metadata</url>
+    </scm>
+
+    <!-- Properties -->
+    <properties>
+        <version.jboss.osgi.core>4.4-SNAPSHOT</version.jboss.osgi.core>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
+        </dependency>
+
+        <!-- OSGi Dependencies -->
+        <dependency>
+            <groupId>org.jboss.osgi.core</groupId>
+            <artifactId>jbosgi-core-api</artifactId>
+            <version>${version.jboss.osgi.core}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+</project>
