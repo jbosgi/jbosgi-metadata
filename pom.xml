@@ -32,14 +32,14 @@
 
     <!-- Source -->
     <scm>
-        <connection>scm:git:git://github.com/tdiesler/jbosgi-metadata.git</connection>
-        <developerConnection>scm:git:git@github.com:tdiesler/jbosgi-metadata.git</developerConnection>
-        <url>http://github.com/tdiesler/jbosgi-metadata</url>
+        <connection>scm:git:git://github.com/jbosgi/jbosgi-metadata.git</connection>
+        <developerConnection>scm:git:git@github.com:jbosgi/jbosgi-metadata.git</developerConnection>
+        <url>http://github.com/jbosgi/jbosgi-metadata</url>
     </scm>
 
     <!-- Properties -->
     <properties>
-        <version.jboss.osgi.core>4.4-SNAPSHOT</version.jboss.osgi.core>
+        <version.jboss.osgi.core>5.0.CR1</version.jboss.osgi.core>
     </properties>
 
     <dependencies>
