@@ -23,8 +23,8 @@ package org.jboss.osgi.metadata.internal;
 
 import org.jboss.osgi.metadata.PackageAttribute;
 import org.jboss.osgi.metadata.Parameter;
+import org.jboss.osgi.metadata.VersionRange;
 import org.osgi.framework.Constants;
-import org.osgi.framework.VersionRange;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -56,7 +56,7 @@ public class AbstractPackageAttribute extends AbstractParameterizedAttribute imp
                     throw new IllegalArgumentException("Duplicate version parameter.");
                 Object value = parameter.getValue();
                 if (value != null) {
-                    versionRange = new VersionRange(value.toString());
+                    versionRange = VersionRange.parse(value.toString());
                 }
             }
         }

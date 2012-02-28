@@ -21,7 +21,7 @@
  */
 package org.jboss.osgi.metadata.internal;
 
-import org.osgi.framework.VersionRange;
+import org.jboss.osgi.metadata.VersionRange;
 
 /**
  * Parse VersionRange from string.
@@ -38,6 +38,6 @@ class VersionRangeValueCreator extends AbstractValueCreator<VersionRange> {
     }
 
     public VersionRange useString(String attribute) {
-        return new VersionRange(attribute);
+        return VersionRange.parse(attribute);
     }
 }

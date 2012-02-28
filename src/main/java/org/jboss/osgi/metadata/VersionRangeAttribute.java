@@ -21,8 +21,6 @@
  */
 package org.jboss.osgi.metadata;
 
-import org.osgi.framework.VersionRange;
-
 /**
  * Attribute with VersionRange attribute.
  * 

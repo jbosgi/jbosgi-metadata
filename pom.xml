@@ -9,17 +9,13 @@
 <!-- -->
 <!-- ====================================================================== -->
 
-<!-- $Id$ -->
-
-<!-- Set these VM properties in your IDE debugger -Dlog4j.output.dir=${workspace_loc:jboss-osgi-framework/target} -Dlog4j.configuration=log4j-console.xml -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.jboss.osgi</groupId>
         <artifactId>jboss-osgi-parent</artifactId>
-        <version>1.0.10</version>
+        <version>1.0.15</version>
     </parent>
 
     <name>JBossOSGi Resolver Metadata</name>
@@ -38,20 +34,21 @@
 
     <!-- Properties -->
     <properties>
-        <version.jboss.osgi.core>5.0.CR1</version.jboss.osgi.core>
+        <version.jboss.logging>3.1.0.GA</version.jboss.logging>
+        <version.osgi.core>4.2.0</version.osgi.core>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.jboss.logging</groupId>
             <artifactId>jboss-logging</artifactId>
+            <version>${version.jboss.logging}</version>
+            <scope>provided</scope>
         </dependency>
-
-        <!-- OSGi Dependencies -->
         <dependency>
-            <groupId>org.jboss.osgi.core</groupId>
-            <artifactId>jbosgi-core-api</artifactId>
-            <version>${version.jboss.osgi.core}</version>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>${version.osgi.core}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

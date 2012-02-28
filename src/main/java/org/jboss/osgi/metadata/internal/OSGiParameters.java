@@ -23,7 +23,7 @@ package org.jboss.osgi.metadata.internal;
 
 import org.jboss.logging.Logger;
 import org.jboss.osgi.metadata.Parameter;
-import org.osgi.framework.VersionRange;
+import org.jboss.osgi.metadata.VersionRange;
 
 import java.util.Collection;
 import java.util.Collections;
