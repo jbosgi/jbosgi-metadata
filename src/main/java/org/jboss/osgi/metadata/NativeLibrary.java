@@ -21,6 +21,8 @@
  */
 package org.jboss.osgi.metadata;
 
+import static org.jboss.osgi.metadata.internal.MetadataMessages.MESSAGES;
+
 import java.io.Serializable;
 
 /**
@@ -28,7 +30,7 @@ import java.io.Serializable;
  *
  * 3.9 Loading Native Code Libraries http://www.osgi.org/Download/File?url=/download/r4v42/r4.core.pdf
  *
- * @author thomas.diesler@jboss.com
+ * @author Thomas.Diesler@jboss.com
  * @author David Bosschaert
  * @since 21-Jan-2010
  */
@@ -45,7 +47,7 @@ public class NativeLibrary implements Serializable {
      */
     public NativeLibrary(String libraryPath) {
         if (libraryPath == null)
-            throw new IllegalArgumentException("Null library path: " + libraryPath);
+            throw MESSAGES.illegalArgumentNull("libraryPath");
         this.libraryPath = libraryPath;
     }
 

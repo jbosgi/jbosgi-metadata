@@ -21,18 +21,21 @@
  */
 package org.jboss.osgi.metadata.internal;
 
+import static org.jboss.osgi.metadata.internal.MetadataMessages.MESSAGES;
+
+import java.io.Serializable;
+import java.util.Map;
+
 import org.jboss.osgi.metadata.PackageAttribute;
 import org.jboss.osgi.metadata.Parameter;
 import org.jboss.osgi.metadata.VersionRange;
 import org.osgi.framework.Constants;
 
-import java.io.Serializable;
-import java.util.Map;
-
 /**
  * Package attribute impl.
  * 
  * @author <a href="mailto:ales.justin@jboss.com">Ales Justin</a>
+ * @author Thomas.Diesler@jboss.com
  */
 public class AbstractPackageAttribute extends AbstractParameterizedAttribute implements PackageAttribute, Serializable {
     private static final long serialVersionUID = 1l;
@@ -53,7 +56,7 @@ public class AbstractPackageAttribute extends AbstractParameterizedAttribute imp
             Parameter parameter = getDirective(Constants.VERSION_ATTRIBUTE);
             if (parameter != null) {
                 if (parameter.isCollection())
-                    throw new IllegalArgumentException("Duplicate version parameter.");
+                    throw MESSAGES.illegalArgumentDuplicateVersionParameter();
                 Object value = parameter.getValue();
                 if (value != null) {
                     versionRange = VersionRange.parse(value.toString());

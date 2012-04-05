@@ -21,6 +21,8 @@
  */
 package org.jboss.osgi.metadata;
 
+import static org.jboss.osgi.metadata.internal.MetadataMessages.MESSAGES;
+
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Enumeration;
@@ -34,7 +36,7 @@ import java.util.Vector;
  * CaseInsensitiveDictionary.
  * 
  * @author <a href="adrian@jboss.com">Adrian Brock</a>
- * @version $Revision: 1.1 $
+ * @author Thomas.Diesler@jboss.com
  */
 @SuppressWarnings("rawtypes")
 public class CaseInsensitiveDictionary extends Hashtable {
@@ -54,7 +56,7 @@ public class CaseInsensitiveDictionary extends Hashtable {
     @SuppressWarnings("unchecked")
     public CaseInsensitiveDictionary(Dictionary delegate) {
         if (delegate == null)
-            throw new IllegalArgumentException("Null delegaqte");
+            throw MESSAGES.illegalArgumentNull("delegate");
 
         this.delegate = new Hashtable<String, Object>(delegate.size());
         this.originalKeys = Collections.synchronizedSet(new HashSet<String>());
@@ -62,7 +64,7 @@ public class CaseInsensitiveDictionary extends Hashtable {
         while (e.hasMoreElements()) {
             String key = e.nextElement();
             if (get(key) != null)
-                throw new IllegalArgumentException("Properties contain duplicates with varying case for key=" + key + " : " + delegate);
+                throw MESSAGES.illegalArgumentDuplicatesForKey(key, delegate);
 
             this.delegate.put(key.toLowerCase(), delegate.get(key));
             originalKeys.add(key);

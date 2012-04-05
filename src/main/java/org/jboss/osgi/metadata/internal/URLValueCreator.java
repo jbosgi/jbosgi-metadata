@@ -21,6 +21,8 @@
  */
 package org.jboss.osgi.metadata.internal;
 
+import static org.jboss.osgi.metadata.internal.MetadataLogger.LOGGER;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -28,8 +30,10 @@ import java.net.URL;
  * Create URL from string.
  * 
  * @author <a href="mailto:ales.justin@jboss.com">Ales Justin</a>
+ * @author Thomas.Diesler@jboss.com
  */
 class URLValueCreator extends AbstractValueCreator<URL> {
+    
     public URLValueCreator() {
         super();
     }
@@ -41,8 +45,8 @@ class URLValueCreator extends AbstractValueCreator<URL> {
     public URL useString(String attribute) {
         try {
             return new URL(attribute);
-        } catch (MalformedURLException e) {
-            log.warn("Exception while creating URL.", e);
+        } catch (MalformedURLException ex) {
+            LOGGER.warnCannotCreateURL(attribute);
             return null;
         }
     }

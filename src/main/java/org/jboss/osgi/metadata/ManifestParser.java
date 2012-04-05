@@ -43,6 +43,8 @@
  */
 package org.jboss.osgi.metadata;
 
+import static org.jboss.osgi.metadata.internal.MetadataMessages.MESSAGES;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -56,7 +58,7 @@ import org.jboss.osgi.metadata.internal.AbstractParameterizedAttribute;
  * ManifestParser.
  *
  * @author <a href="adrian@jboss.com">Adrian Brock</a>
- * @author David Bosschaert
+ * @author Thomas.Diesler@jboss.com
  */
 public class ManifestParser {
     /**
@@ -98,10 +100,8 @@ public class ManifestParser {
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void parse(String header, List list, boolean packages, boolean allowDuplicateAttributes) {
-        if (header == null)
-            return;
-        if (header.length() == 0)
-            throw new IllegalArgumentException("Empty header");
+        if (header == null || header.length() == 0)
+            throw MESSAGES.illegalArgumentNull("header");
 
         // Split the header into clauses using which are seperated by commas
         // Like this: path; path; dir1:=dirval1; dir2:=dirval2; attr1=attrval1; attr2=attrval2,
@@ -122,7 +122,7 @@ public class ManifestParser {
                 paths.add(unquote(piece));
             }
             if (paths.isEmpty())
-                throw new IllegalArgumentException("No paths for " + clause);
+                throw MESSAGES.illegalArgumentNoPathsForClause(clause);
 
             Map<String, Parameter> directives = null;
             Map<String, Parameter> attributes = null;
@@ -137,7 +137,7 @@ public class ManifestParser {
                         directives = new HashMap<String, Parameter>();
                     String unquoted = unquote(name);
                     if (directives.containsKey(unquoted))
-                        throw new IllegalStateException("Dupicate directive: " + unquoted);
+                        throw MESSAGES.illegalArgumentDuplicateDirective(unquoted);
                     directives.put(unquoted, new AbstractParameter(unquote(value)));
                 } else {
                     seperator = piece.indexOf("=");
@@ -150,7 +150,7 @@ public class ManifestParser {
                         Parameter attribute = attributes.get(unquoted);
                         if (attribute != null) {
                             if (!allowDuplicateAttributes) {
-                                throw new IllegalStateException("Duplicate attribute: " + unquoted);
+                                throw MESSAGES.illegalArgumentDuplicateAttribute(unquoted);
                             }
                         } else {
                             attribute = new AbstractParameter();
@@ -158,7 +158,7 @@ public class ManifestParser {
                         }
                         attribute.addValue(unquote(value));
                     } else {
-                        throw new IllegalArgumentException("Path " + piece + " should appear before attributes and directives in " + clause);
+                        throw MESSAGES.illegalArgumentPathShouldAppearBefore(piece, clause);
                     }
                 }
             }
@@ -232,7 +232,7 @@ public class ManifestParser {
             } else if ((expecting & CHAR) > 0) {
                 sb.append(c);
             } else {
-                throw new IllegalArgumentException("Invalid delimited string: '" + value + "' delimiter=" + delim);
+                throw MESSAGES.illegalArgumentInvalidDelimitedString(value, delim);
             }
         }
 

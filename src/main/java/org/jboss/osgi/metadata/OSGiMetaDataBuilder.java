@@ -21,6 +21,8 @@
  */
 package org.jboss.osgi.metadata;
 
+import static org.jboss.osgi.metadata.internal.MetadataMessages.MESSAGES;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -48,14 +50,14 @@ public class OSGiMetaDataBuilder {
 
     public static OSGiMetaData load(InputStream input) throws IOException {
         if (input == null)
-            throw new IllegalArgumentException("Null input");
+            throw MESSAGES.illegalArgumentNull("input");
 
         return load(new InputStreamReader(input));
     }
 
     public static OSGiMetaData load(Reader reader) throws IOException {
         if (reader == null)
-            throw new IllegalArgumentException("Null reader");
+            throw MESSAGES.illegalArgumentNull("reader");
 
         Properties props = new Properties();
         props.load(reader);
@@ -64,7 +66,7 @@ public class OSGiMetaDataBuilder {
 
     public static OSGiMetaData load(Properties props) {
         if (props == null)
-            throw new IllegalArgumentException("Null props");
+            throw MESSAGES.illegalArgumentNull("props");
 
         Manifest manifest = new Manifest();
         Attributes mainAttributes = manifest.getMainAttributes();

@@ -21,6 +21,8 @@
  */
 package org.jboss.osgi.metadata.internal;
 
+import static org.jboss.osgi.metadata.internal.MetadataMessages.MESSAGES;
+
 import java.util.Collections;
 import java.util.Map;
 
@@ -31,6 +33,7 @@ import org.jboss.osgi.metadata.ParameterizedAttribute;
  * Parameter attribute impl.
  * 
  * @author <a href="mailto:ales.justin@jboss.com">Ales Justin</a>
+ * @author Thomas.Diesler@jboss.com
  */
 public class AbstractParameterizedAttribute extends AbstractAttributeAware implements ParameterizedAttribute {
     private static final long serialVersionUID = 1l;
@@ -65,7 +68,7 @@ public class AbstractParameterizedAttribute extends AbstractAttributeAware imple
         if (parameter == null)
             return defaultValue;
         if (parameter.isCollection())
-            throw new IllegalArgumentException("Duplicate " + name + " attribute.");
+            throw MESSAGES.illegalArgumentDuplicateAttribute(name);
         Object value = parameter.getValue();
         if (value == null)
             return defaultValue;
@@ -89,7 +92,7 @@ public class AbstractParameterizedAttribute extends AbstractAttributeAware imple
         if (parameter == null)
             return defaultValue;
         if (parameter.isCollection())
-            throw new IllegalArgumentException("Duplicate " + name + " directive.");
+            throw MESSAGES.illegalArgumentDuplicateDirective(name);
         Object value = parameter.getValue();
         if (value == null)
             return defaultValue;

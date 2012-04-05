@@ -21,6 +21,8 @@
  */
 package org.jboss.osgi.metadata;
 
+import static org.jboss.osgi.metadata.internal.MetadataMessages.MESSAGES;
+
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,7 +50,7 @@ class OSGiManifestMetaData extends AbstractOSGiMetaData implements Externalizabl
 
     OSGiManifestMetaData(Manifest manifest) {
         if (manifest == null)
-            throw new IllegalArgumentException("Null manifest");
+            throw MESSAGES.illegalArgumentNull("manifest");
         this.manifest = manifest;
     }
 

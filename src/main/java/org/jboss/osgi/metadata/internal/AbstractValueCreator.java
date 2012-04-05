@@ -21,15 +21,14 @@
  */
 package org.jboss.osgi.metadata.internal;
 
-import org.jboss.logging.Logger;
-
 /**
  * Abstract value creator. Extend this one for safe string usage.
  * 
  * @author <a href="mailto:ales.justin@jboss.com">Ales Justin</a>
+ * @author Thomas.Diesler@jboss.com
  */
 abstract class AbstractValueCreator<T> implements ValueCreator<T> {
-    protected Logger log = Logger.getLogger(getClass());
+
     private boolean trim;
 
     protected AbstractValueCreator() {

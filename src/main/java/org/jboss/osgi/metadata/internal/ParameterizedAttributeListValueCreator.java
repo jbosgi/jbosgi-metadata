@@ -21,6 +21,8 @@
  */
 package org.jboss.osgi.metadata.internal;
 
+import static org.jboss.osgi.metadata.internal.MetadataLogger.LOGGER;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,11 +32,13 @@ import org.jboss.osgi.metadata.ParameterizedAttribute;
  * Create parameterized attribute list from string attribute.
  * 
  * @author <a href="mailto:ales.justin@jboss.com">Ales Justin</a>
+ * @author Thomas.Diesler@jboss.com
  */
 abstract class ParameterizedAttributeListValueCreator extends ListValueCreator<ParameterizedAttribute> {
+
     public List<ParameterizedAttribute> useString(String attribute) {
         List<ParameterizedAttribute> list = new ArrayList<ParameterizedAttribute>();
-        parseAttribute(attribute, list, log.isTraceEnabled());
+        parseAttribute(attribute, list, LOGGER.isTraceEnabled());
         return list;
     }
 

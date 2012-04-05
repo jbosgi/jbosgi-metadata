@@ -21,15 +21,7 @@
  */
 package org.jboss.osgi.metadata.internal;
 
-import org.jboss.logging.Logger;
-import org.jboss.osgi.metadata.Parameter;
-import org.jboss.osgi.metadata.VersionRange;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
+import static org.jboss.osgi.metadata.internal.MetadataLogger.LOGGER;
 import static org.osgi.framework.Constants.BUNDLE_SYMBOLICNAME_ATTRIBUTE;
 import static org.osgi.framework.Constants.BUNDLE_VERSION_ATTRIBUTE;
 import static org.osgi.framework.Constants.RESOLUTION_DIRECTIVE;
@@ -38,13 +30,21 @@ import static org.osgi.framework.Constants.VERSION_ATTRIBUTE;
 import static org.osgi.framework.Constants.VISIBILITY_DIRECTIVE;
 import static org.osgi.framework.Constants.VISIBILITY_PRIVATE;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.jboss.osgi.metadata.Parameter;
+import org.jboss.osgi.metadata.VersionRange;
+
 /**
  * OSGi parameter values. Util for transforming parameter info to actual useful values.
  * 
  * @author <a href="mailto:ales.justin@jboss.com">Ales Justin</a>
+ * @author Thomas.Diesler@jboss.com
  */
 public class OSGiParameters {
-    protected static Logger log = Logger.getLogger(OSGiParameters.class);
 
     protected Map<String, Parameter> parameters;
     protected Map<String, Object> cachedAttributes;
@@ -94,7 +94,7 @@ public class OSGiParameters {
                         CollectionValueCreator<T> cvc = (CollectionValueCreator<T>) creator;
                         value = cvc.createValue((Collection<String>) paramValue);
                     } else {
-                        log.warn("Unable to create proper value from " + creator + " for parameter: " + parameter);
+                        LOGGER.warnCannotCreateValueForParameter(creator, parameter);
                     }
                 } else {
                     value = creator.createValue(paramValue.toString());

@@ -23,6 +23,8 @@ package org.jboss.osgi.metadata;
 
 // $Id$
 
+import static org.jboss.osgi.metadata.internal.MetadataMessages.MESSAGES;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -32,8 +34,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * 
  * 3.9 Loading Native Code Libraries http://www.osgi.org/Download/File?url=/download/r4v42/r4.core.pdf
  * 
- * @author thomas.diesler@jboss.com
- * @version $Revision$
+ * @author Thomas.Diesler@jboss.com
  * @since 21-Jan-2010
  */
 public class NativeLibraryMetaData implements Serializable {
@@ -53,7 +54,7 @@ public class NativeLibraryMetaData implements Serializable {
 
     public void addNativeLibrary(NativeLibrary nativeLibrary) {
         if (nativeLibrary == null)
-            throw new IllegalArgumentException("Null library");
+            throw MESSAGES.illegalArgumentNull("library");
 
         if (nativeLibraries == null)
             nativeLibraries = new CopyOnWriteArrayList<NativeLibrary>();
@@ -63,7 +64,7 @@ public class NativeLibraryMetaData implements Serializable {
 
     public void removeNativeLibrary(NativeLibrary nativeLibrary) {
         if (nativeLibrary == null)
-            throw new IllegalArgumentException("Null library");
+            throw MESSAGES.illegalArgumentNull("library");
 
         if (nativeLibraries == null)
             return;
