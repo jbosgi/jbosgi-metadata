@@ -53,6 +53,7 @@ import static org.osgi.framework.Constants.REQUIRE_BUNDLE;
 
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
@@ -77,7 +78,7 @@ import org.osgi.framework.Version;
  * @author David Bosschaert
  */
 public abstract class AbstractOSGiMetaData implements OSGiMetaData {
-    private static final long serialVersionUID = 1L;
+
     private static final int START_LEVEL_NOT_DEFINED = -1;
 
     // The cached attributes
@@ -226,18 +227,20 @@ public abstract class AbstractOSGiMetaData implements OSGiMetaData {
 
     @SuppressWarnings("unchecked")
     protected <T> T get(String key, ValueCreator<T> creator, T defaultValue) {
-        T value = (T) cachedAttributes.get(key);
-        if (value == null) {
-            String attribute = getMainAttribute(key);
-            if (attribute != null) {
-                value = creator.createValue(attribute);
-            } else if (defaultValue != null) {
-                value = defaultValue;
+        synchronized (cachedAttributes) {
+            T value = (T) cachedAttributes.get(key);
+            if (value == null) {
+                String attribute = getMainAttribute(key);
+                if (attribute != null) {
+                    value = creator.createValue(attribute);
+                } else if (defaultValue != null) {
+                    value = defaultValue;
+                }
+                if (value != null)
+                    cachedAttributes.put(key, value);
             }
-            if (value != null)
-                cachedAttributes.put(key, value);
+            return value;
         }
-        return value;
     }
 
     public int getInitialStartLevel() {
@@ -248,8 +251,17 @@ public abstract class AbstractOSGiMetaData implements OSGiMetaData {
         initialStartLevel = sl;
     }
 
+    public Map<String, Object> getCachedAttributes() {
+        synchronized (cachedAttributes) {
+            return Collections.unmodifiableMap(cachedAttributes);
+        }
+    }
+
     @Override
     public String toString() {
-        return cachedAttributes.toString();
+        String name = getMainAttribute(Constants.BUNDLE_SYMBOLICNAME);
+        name = name != null ? name : getMainAttribute(Constants.BUNDLE_NAME);
+        Version version = Version.parseVersion(getMainAttribute(Constants.BUNDLE_VERSION));
+        return "[" + name + ":" + version + "]";
     }
 }

@@ -28,6 +28,7 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -66,7 +67,7 @@ public class CaseInsensitiveDictionary extends Hashtable {
             if (get(key) != null)
                 throw MESSAGES.illegalArgumentDuplicatesForKey(key, delegate);
 
-            this.delegate.put(key.toLowerCase(), delegate.get(key));
+            this.delegate.put(key.toLowerCase(Locale.ENGLISH), delegate.get(key));
             originalKeys.add(key);
         }
     }
@@ -98,7 +99,7 @@ public class CaseInsensitiveDictionary extends Hashtable {
 
     public Object get(Object key) {
         if (key instanceof String)
-            key = ((String) key).toLowerCase();
+            key = ((String) key).toLowerCase(Locale.ENGLISH);
         return delegate.get(key);
     }
 

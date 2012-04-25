@@ -78,7 +78,7 @@ class OSGiManifestMetaData extends AbstractOSGiMetaData implements Externalizabl
         manifest = new Manifest(is);
     }
 
-    class OutputWrapper extends OutputStream {
+    private static class OutputWrapper extends OutputStream {
         private ObjectOutput out;
 
         public OutputWrapper(ObjectOutput out) {

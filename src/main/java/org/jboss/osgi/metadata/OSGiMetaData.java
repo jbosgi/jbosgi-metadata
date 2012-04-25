@@ -24,6 +24,7 @@ package org.jboss.osgi.metadata;
 import java.net.URL;
 import java.util.Dictionary;
 import java.util.List;
+import java.util.Map;
 
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
@@ -35,6 +36,7 @@ import org.osgi.framework.Version;
  * @author thomas.diesler@jboss.com
  */
 public interface OSGiMetaData {
+    
     /** The fallback {@link Constants#BUNDLE_SYMBOLICNAME} for a v4.1 bundle */
     final String ANONYMOUS_BUNDLE_SYMBOLIC_NAME = "anonymous-bundle-symbolic-name";
 
@@ -211,4 +213,10 @@ public interface OSGiMetaData {
      *         bundle.
      */
     int getInitialStartLevel();
+    
+    /**
+     * Get the map of already known attributes  
+     */
+    Map<String, Object> getCachedAttributes();
+
 }

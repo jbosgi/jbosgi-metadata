@@ -36,7 +36,6 @@ import org.jboss.osgi.metadata.ParameterizedAttribute;
  * @author Thomas.Diesler@jboss.com
  */
 public class AbstractParameterizedAttribute extends AbstractAttributeAware implements ParameterizedAttribute {
-    private static final long serialVersionUID = 1l;
 
     protected Map<String, Parameter> attributes;
     protected Map<String, Parameter> directives;
