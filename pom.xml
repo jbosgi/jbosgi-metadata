@@ -23,7 +23,7 @@
     <artifactId>jbosgi-metadata</artifactId>
     <packaging>jar</packaging>
 
-    <version>2.1.0.CR3-SNAPSHOT</version>
+    <version>2.1.0.Final</version>
 
     <!-- Source -->
     <scm>
