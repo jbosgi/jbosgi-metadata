@@ -72,7 +72,7 @@ import org.osgi.framework.Version;
 
 /**
  * Abstract OSGi meta data.
- * 
+ *
  * @author <a href="mailto:ales.justin@jboss.com">Ales Justin</a>
  * @author Thomas.Diesler@jboss.com
  * @author David Bosschaert
@@ -147,25 +147,25 @@ public abstract class AbstractOSGiMetaData implements OSGiMetaData {
     }
 
     public String getBundleSymbolicName() {
-        String symbolicName = null;
-
+        String result = null;
         ParameterizedAttribute parameters = parseSymbolicName();
-        if (parameters != null)
-            symbolicName = parameters.getAttribute();
-        else if (getBundleManifestVersion() == 1)
-            symbolicName = ANONYMOUS_BUNDLE_SYMBOLIC_NAME;
-
-        return symbolicName;
+        if (parameters != null) {
+            result = parameters.getAttribute();
+        }
+        return result;
     }
 
     public Version getBundleVersion() {
-        try {
+        if (getBundleManifestVersion() >= 2) {
             return get(BUNDLE_VERSION, VERSION_VC, Version.emptyVersion);
-        } catch (NumberFormatException ex) {
-            if (getBundleManifestVersion() == 2)
-                throw ex;
-
-            return Version.emptyVersion;
+        } else {
+            try {
+                return get(BUNDLE_VERSION, VERSION_VC, Version.emptyVersion);
+            } catch (NumberFormatException ex) {
+                // Install expected to succeed on invalid Bundle-Version
+                // https://www.osgi.org/members/bugzilla/show_bug.cgi?id=1503
+                return Version.emptyVersion;
+            }
         }
     }
 
