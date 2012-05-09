@@ -52,7 +52,6 @@ import static org.osgi.framework.Constants.IMPORT_PACKAGE;
 import static org.osgi.framework.Constants.REQUIRE_BUNDLE;
 
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -119,7 +118,7 @@ public abstract class AbstractOSGiMetaData implements OSGiMetaData {
     }
 
     public List<String> getBundleClassPath() {
-        return get(BUNDLE_CLASSPATH, STRING_LIST_VC, Arrays.asList("."));
+        return get(BUNDLE_CLASSPATH, STRING_LIST_VC);
     }
 
     public String getBundleDescription() {
@@ -147,25 +146,21 @@ public abstract class AbstractOSGiMetaData implements OSGiMetaData {
     }
 
     public String getBundleSymbolicName() {
-        String result = null;
         ParameterizedAttribute parameters = parseSymbolicName();
-        if (parameters != null) {
-            result = parameters.getAttribute();
-        }
-        return result;
+        return (parameters != null ? parameters.getAttribute() : null);
     }
 
     public Version getBundleVersion() {
-        if (getBundleManifestVersion() >= 2) {
+        try {
             return get(BUNDLE_VERSION, VERSION_VC, Version.emptyVersion);
-        } else {
-            try {
-                return get(BUNDLE_VERSION, VERSION_VC, Version.emptyVersion);
-            } catch (NumberFormatException ex) {
-                // Install expected to succeed on invalid Bundle-Version
+        } catch (NumberFormatException ex) {
+            int manifestVersion = getBundleManifestVersion();
+            if (manifestVersion < 2) {
+                // Install expected to succeed on invalid Bundle-Version for R3 bundle
                 // https://www.osgi.org/members/bugzilla/show_bug.cgi?id=1503
                 return Version.emptyVersion;
             }
+            throw ex;
         }
     }
 
