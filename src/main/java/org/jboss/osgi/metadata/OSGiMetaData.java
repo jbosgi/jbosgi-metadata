@@ -26,6 +26,7 @@ import java.util.Dictionary;
 import java.util.List;
 import java.util.Map;
 
+import org.osgi.framework.BundleException;
 import org.osgi.framework.Version;
 
 /**
@@ -197,15 +198,6 @@ public interface OSGiMetaData {
     boolean isSingleton();
 
     /**
-     * Get the fragment attrachment
-     *
-     * todo fragments
-     *
-     * @return the fragment attachment
-     */
-    String getFragmentAttachment();
-
-    /**
      * Returns the initial start level of the bundle.
      *
      * @return The initial start level of the bundle or -1 when the initial bundle start level has not been defined for this
@@ -218,4 +210,8 @@ public interface OSGiMetaData {
      */
     Map<String, Object> getCachedAttributes();
 
+    /**
+     * Validate the this metadata
+     */
+    OSGiMetaData validate() throws BundleException;
 }

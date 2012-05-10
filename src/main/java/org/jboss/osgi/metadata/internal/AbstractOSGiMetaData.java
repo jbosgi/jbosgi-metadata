@@ -64,8 +64,10 @@ import java.util.jar.Attributes.Name;
 import org.jboss.osgi.metadata.ActivationPolicyMetaData;
 import org.jboss.osgi.metadata.CaseInsensitiveDictionary;
 import org.jboss.osgi.metadata.OSGiMetaData;
+import org.jboss.osgi.metadata.OSGiMetaDataBuilder;
 import org.jboss.osgi.metadata.PackageAttribute;
 import org.jboss.osgi.metadata.ParameterizedAttribute;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 
@@ -250,6 +252,12 @@ public abstract class AbstractOSGiMetaData implements OSGiMetaData {
         synchronized (cachedAttributes) {
             return Collections.unmodifiableMap(cachedAttributes);
         }
+    }
+
+    @Override
+    public OSGiMetaData validate() throws BundleException {
+        OSGiMetaDataBuilder.validateMetadata(this);
+        return this;
     }
 
     @Override

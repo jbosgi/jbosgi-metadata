@@ -33,12 +33,13 @@ import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
+import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 
 /**
  * A builder for {@link OSGiMetaData}.
- * 
+ *
  * @author Thomas.Diesler@jboss.com
  * @since 04-Jun-2010
  */
@@ -51,14 +52,12 @@ public class OSGiMetaDataBuilder {
     public static OSGiMetaData load(InputStream input) throws IOException {
         if (input == null)
             throw MESSAGES.illegalArgumentNull("input");
-
         return load(new InputStreamReader(input));
     }
 
     public static OSGiMetaData load(Reader reader) throws IOException {
         if (reader == null)
             throw MESSAGES.illegalArgumentNull("reader");
-
         Properties props = new Properties();
         props.load(reader);
         return load(props);
@@ -67,26 +66,103 @@ public class OSGiMetaDataBuilder {
     public static OSGiMetaData load(Properties props) {
         if (props == null)
             throw MESSAGES.illegalArgumentNull("props");
-
         Manifest manifest = new Manifest();
         Attributes mainAttributes = manifest.getMainAttributes();
         for (Object key : props.keySet()) {
             Attributes.Name name = new Attributes.Name((String) key);
             mainAttributes.put(name, props.get(key));
         }
-
         return load(manifest);
     }
 
     public static OSGiMetaData load(Manifest manifest) {
+        if (manifest == null)
+            throw MESSAGES.illegalArgumentNull("manifest");
         return new OSGiManifestMetaData(manifest);
     }
 
+    /**
+     * Validate a given OSGi metadata.
+     *
+     * @param metadata The given metadata
+     * @return True if the metadata is valid
+     */
+    public static boolean isValidMetadata(OSGiMetaData metadata) {
+        if (metadata == null)
+            return false;
+        try {
+            validateMetadata(metadata);
+            return true;
+        } catch (BundleException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Validate a given OSGi metadata.
+     *
+     * @param metadata The given metadata
+     * @throws BundleException if the given metadata is not a valid
+     */
+    public static void validateMetadata(OSGiMetaData metadata) throws BundleException {
+        if (metadata == null)
+            throw MESSAGES.illegalArgumentNull("metadata");
+
+        // A bundle manifest must express the version of the OSGi manifest header
+        // syntax in the Bundle-ManifestVersion header. Bundles exploiting this version
+        // of the Framework specification (or later) must specify this header.
+        // The Framework version 1.3 (or later) bundle manifest version must be ’2’.
+        // Bundle manifests written to previous specifications’ manifest syntax are
+        // taken to have a bundle manifest version of '1', although there is no way to
+        // express this in such manifests.
+        int manifestVersion = getBundleManifestVersion(metadata);
+        if (manifestVersion < 0)
+            throw MESSAGES.bundleCannotObtainBundleManifestVersion();
+        if (manifestVersion > 2)
+            throw MESSAGES.bundleUnsupportedBundleManifestVersion(manifestVersion);
+
+        String symbolicName = metadata.getBundleSymbolicName();
+
+        // R3 Framework
+        if (manifestVersion == 1 && symbolicName != null)
+            throw MESSAGES.bundleInvalidBundleManifestVersion(symbolicName);
+
+        // R4 Framework
+        if (manifestVersion == 2) {
+            if (symbolicName == null)
+                throw MESSAGES.bundleCannotObtainBundleSymbolicName();
+
+            // Check if we can get the bundle version
+            metadata.getBundleVersion();
+        }
+    }
+
+    private static int getBundleManifestVersion(OSGiMetaData metaData) {
+
+        // At least one of these manifest headers must be there
+        // Note, in R3 and R4 there is no common mandatory header
+        String bundleName = metaData.getBundleName();
+        String bundleSymbolicName = metaData.getBundleSymbolicName();
+        Version bundleVersion = metaData.getBundleVersion();
+
+        if (bundleName == null && bundleSymbolicName == null && bundleVersion.equals(Version.emptyVersion))
+            return -1;
+
+        Integer manifestVersion = metaData.getBundleManifestVersion();
+        return manifestVersion != null ? manifestVersion : 1;
+    }
+
     public static OSGiMetaDataBuilder createBuilder(String symbolicName) {
+        if (symbolicName == null)
+            throw MESSAGES.illegalArgumentNull("symbolicName");
         return new OSGiMetaDataBuilder(symbolicName, Version.emptyVersion);
     }
 
     public static OSGiMetaDataBuilder createBuilder(String symbolicName, Version version) {
+        if (symbolicName == null)
+            throw MESSAGES.illegalArgumentNull("symbolicName");
+        if (version == null)
+            throw MESSAGES.illegalArgumentNull("version");
         return new OSGiMetaDataBuilder(symbolicName, version);
     }
 
@@ -151,7 +227,13 @@ public class OSGiMetaDataBuilder {
         return this;
     }
 
-    public OSGiMetaData getOSGiMetaData() {
+    public OSGiMetaData getAndValidateMetaData() throws BundleException {
+        OSGiMetaData metadata = getMetaDataInternal();
+        validateMetadata(metadata);
+        return metadata;
+    }
+
+    private OSGiMetaData getMetaDataInternal() {
         // Export-Package
         if (exportPackages.size() > 0) {
             StringBuffer value = new StringBuffer();
@@ -182,5 +264,9 @@ public class OSGiMetaDataBuilder {
             metadata.addMainAttribute(Constants.DYNAMICIMPORT_PACKAGE, value.toString());
         }
         return metadata;
+    }
+
+    public OSGiMetaData getOSGiMetaData() {
+        return getMetaDataInternal();
     }
 }

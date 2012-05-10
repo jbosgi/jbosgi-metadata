@@ -27,6 +27,7 @@ import java.util.Dictionary;
 import org.jboss.logging.Message;
 import org.jboss.logging.MessageBundle;
 import org.jboss.logging.Messages;
+import org.osgi.framework.BundleException;
 
 /**
  * Logging Id ranges: 10700-10799
@@ -63,4 +64,16 @@ public interface MetadataMessages {
 
     @Message(id = 10707, value = "Invalid delimited string [%s] for delimiter: %s")
     IllegalArgumentException illegalArgumentInvalidDelimitedString(String value, String delim);
+
+    @Message(id = 10708, value = "Cannot determine Bundle-ManifestVersion")
+    BundleException bundleCannotObtainBundleManifestVersion();
+
+    @Message(id = 10709, value = "Unsupported Bundle-ManifestVersion: %d")
+    BundleException bundleUnsupportedBundleManifestVersion(int version);
+
+    @Message(id = 10710, value = "Invalid Bundle-ManifestVersion for: %s")
+    BundleException bundleInvalidBundleManifestVersion(String symbolicName);
+
+    @Message(id = 10711, value = "Cannot obtain Bundle-SymbolicName")
+    BundleException bundleCannotObtainBundleSymbolicName();
 }
