@@ -44,11 +44,9 @@ package org.jboss.osgi.metadata;
 
 import static org.jboss.osgi.metadata.internal.MetadataMessages.MESSAGES;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 import java.util.jar.Attributes;
@@ -68,20 +66,36 @@ public class OSGiMetaDataBuilder {
     private DynamicOSGiMetaData metadata;
     private List<String> importPackages = new ArrayList<String>();
     private List<String> exportPackages = new ArrayList<String>();
+    private List<String> requiredBundles = new ArrayList<String>();
     private List<String> dynamicImportPackages = new ArrayList<String>();
 
-    public static OSGiMetaData load(InputStream input) throws IOException {
-        if (input == null)
-            throw MESSAGES.illegalArgumentNull("input");
-        return load(new InputStreamReader(input));
+    public static OSGiMetaDataBuilder createBuilder(String symbolicName) {
+        if (symbolicName == null)
+            throw MESSAGES.illegalArgumentNull("symbolicName");
+        return new OSGiMetaDataBuilder(symbolicName, Version.emptyVersion);
     }
 
-    public static OSGiMetaData load(Reader reader) throws IOException {
-        if (reader == null)
-            throw MESSAGES.illegalArgumentNull("reader");
-        Properties props = new Properties();
-        props.load(reader);
-        return load(props);
+    public static OSGiMetaDataBuilder createBuilder(String symbolicName, Version version) {
+        if (symbolicName == null)
+            throw MESSAGES.illegalArgumentNull("symbolicName");
+        if (version == null)
+            throw MESSAGES.illegalArgumentNull("version");
+        return new OSGiMetaDataBuilder(symbolicName, version);
+    }
+
+    public static OSGiMetaDataBuilder createBuilder(Dictionary<String, String> headers) {
+        if (headers == null)
+            throw MESSAGES.illegalArgumentNull("headers");
+        String symbolicName = headers.get(Constants.BUNDLE_SYMBOLICNAME);
+        Version version = Version.parseVersion(headers.get(Constants.BUNDLE_VERSION));
+        OSGiMetaDataBuilder builder = new OSGiMetaDataBuilder(symbolicName, version);
+        Enumeration<String> keys = headers.keys();
+        while (keys.hasMoreElements()) {
+            String key = keys.nextElement();
+            String value = headers.get(key);
+            builder.addMainAttribute(key, value);
+        }
+        return builder;
     }
 
     public static OSGiMetaData load(Properties props) {
@@ -168,20 +182,6 @@ public class OSGiMetaDataBuilder {
         return manifestVersion != null ? manifestVersion : 1;
     }
 
-    public static OSGiMetaDataBuilder createBuilder(String symbolicName) {
-        if (symbolicName == null)
-            throw MESSAGES.illegalArgumentNull("symbolicName");
-        return new OSGiMetaDataBuilder(symbolicName, Version.emptyVersion);
-    }
-
-    public static OSGiMetaDataBuilder createBuilder(String symbolicName, Version version) {
-        if (symbolicName == null)
-            throw MESSAGES.illegalArgumentNull("symbolicName");
-        if (version == null)
-            throw MESSAGES.illegalArgumentNull("version");
-        return new OSGiMetaDataBuilder(symbolicName, version);
-    }
-
     private OSGiMetaDataBuilder(String symbolicName, Version version) {
         metadata = new DynamicOSGiMetaData(symbolicName, version);
     }
@@ -197,44 +197,51 @@ public class OSGiMetaDataBuilder {
     }
 
     public OSGiMetaDataBuilder addImportPackages(Class<?>... packages) {
-        for (Class<?> aux : packages)
+        for (Class<?> aux : packages) {
             addImportPackages(aux.getPackage().getName());
-
+        }
         return this;
     }
 
     public OSGiMetaDataBuilder addImportPackages(String... packages) {
-        for (String aux : packages)
+        for (String aux : packages) {
             importPackages.add(aux);
-
+        }
         return this;
     }
 
     public OSGiMetaDataBuilder addExportPackages(Class<?>... packages) {
-        for (Class<?> aux : packages)
+        for (Class<?> aux : packages) {
             addExportPackages(aux.getPackage().getName());
-
+        }
         return this;
     }
 
     public OSGiMetaDataBuilder addExportPackages(String... packages) {
-        for (String aux : packages)
+        for (String aux : packages) {
             exportPackages.add(aux);
-
+        }
         return this;
     }
 
     public OSGiMetaDataBuilder addDynamicImportPackages(Class<?>... packages) {
-        for (Class<?> aux : packages)
+        for (Class<?> aux : packages) {
             addDynamicImportPackages(aux.getPackage().getName());
-
+        }
         return this;
     }
 
     public OSGiMetaDataBuilder addDynamicImportPackages(String... packages) {
-        for (String aux : packages)
+        for (String aux : packages) {
             dynamicImportPackages.add(aux);
+        }
+        return this;
+    }
 
+    public OSGiMetaDataBuilder addRequiredBundles(String... required) {
+        for (String aux : required) {
+            requiredBundles.add(aux);
+        }
         return this;
     }
 
@@ -268,6 +275,16 @@ public class OSGiMetaDataBuilder {
                 value.append(importPackages.get(i));
             }
             metadata.addMainAttribute(Constants.IMPORT_PACKAGE, value.toString());
+        }
+
+        // Require-Bundle
+        if (requiredBundles.size() > 0) {
+            StringBuffer value = new StringBuffer();
+            for (int i = 0; i < requiredBundles.size(); i++) {
+                value.append(i > 0 ? "," : "");
+                value.append(requiredBundles.get(i));
+            }
+            metadata.addMainAttribute(Constants.REQUIRE_BUNDLE, value.toString());
         }
 
         // DynamicImport-Package

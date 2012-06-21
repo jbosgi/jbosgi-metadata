@@ -5,16 +5,16 @@
  * Copyright (C) 2010 - 2012 JBoss by Red Hat
  * %%
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as 
- * published by the Free Software Foundation, either version 2.1 of the 
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- * 
- * You should have received a copy of the GNU General Lesser Public 
+ *
+ * You should have received a copy of the GNU General Lesser Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
@@ -42,6 +42,8 @@
  */
 package org.jboss.osgi.metadata;
 
+import static org.jboss.osgi.metadata.internal.MetadataMessages.MESSAGES;
+
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -57,22 +59,26 @@ import org.osgi.framework.Version;
 
 /**
  * OSGi meta data that can constructed dynamically.
- * 
+ *
  * This is needed for deployments that are not backed by a valid OSGi Manifest.
- * 
+ *
  * @author Thomas.Diesler@jboss.com
  * @since 04-Jun-2010
  */
 class DynamicOSGiMetaData extends AbstractOSGiMetaData implements Externalizable {
     private Map<Name, String> attributes = new LinkedHashMap<Name, String>();
 
-    public DynamicOSGiMetaData(String symbolicName, Version version) {
+    DynamicOSGiMetaData(String symbolicName, Version version) {
+        if (symbolicName == null)
+            throw MESSAGES.illegalArgumentNull("symbolicName");
+        if (version == null)
+            throw MESSAGES.illegalArgumentNull("version");
         addMainAttribute(Constants.BUNDLE_MANIFESTVERSION, "2");
         addMainAttribute(Constants.BUNDLE_SYMBOLICNAME, symbolicName);
         addMainAttribute(Constants.BUNDLE_VERSION, version.toString());
     }
 
-    public void addMainAttribute(String key, String value) {
+    void addMainAttribute(String key, String value) {
         attributes.put(new Name(key), value);
     }
 
