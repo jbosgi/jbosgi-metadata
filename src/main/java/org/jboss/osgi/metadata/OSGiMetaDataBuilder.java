@@ -150,21 +150,24 @@ public class OSGiMetaDataBuilder {
         // Bundle manifests written to previous specifications’ manifest syntax are
         // taken to have a bundle manifest version of '1', although there is no way to
         // express this in such manifests.
-        int manifestVersion = getBundleManifestVersion(metadata);
-        if (manifestVersion < 0)
-            throw MESSAGES.bundleCannotObtainBundleManifestVersion();
-        if (manifestVersion > 2)
-            throw MESSAGES.bundleUnsupportedBundleManifestVersion(manifestVersion);
+        try {
+            int manifestVersion = getBundleManifestVersion(metadata);
+            if (manifestVersion < 0)
+                throw MESSAGES.bundleCannotObtainBundleManifestVersion();
+            if (manifestVersion > 2)
+                throw MESSAGES.bundleUnsupportedBundleManifestVersion(manifestVersion);
 
-        // R3 Framework
-        String symbolicName = metadata.getBundleSymbolicName();
-        if (manifestVersion == 1 && symbolicName != null)
-            throw MESSAGES.bundleInvalidBundleManifestVersion(symbolicName);
+            // R3 Framework
+            String symbolicName = metadata.getBundleSymbolicName();
+            if (manifestVersion == 1 && symbolicName != null)
+                throw MESSAGES.bundleInvalidBundleManifestVersion(symbolicName);
 
-        // R4 Framework
-        if (manifestVersion == 2 && symbolicName == null)
-            throw MESSAGES.bundleCannotObtainBundleSymbolicName();
-
+            // R4 Framework
+            if (manifestVersion == 2 && symbolicName == null)
+                throw MESSAGES.bundleCannotObtainBundleSymbolicName();
+        } catch (RuntimeException ex) {
+        	throw MESSAGES.bundleInvalidMetadata(ex);
+        }
     }
 
     private static int getBundleManifestVersion(OSGiMetaData metaData) {

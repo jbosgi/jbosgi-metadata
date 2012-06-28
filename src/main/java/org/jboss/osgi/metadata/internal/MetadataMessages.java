@@ -45,6 +45,7 @@ package org.jboss.osgi.metadata.internal;
 
 import java.util.Dictionary;
 
+import org.jboss.logging.Cause;
 import org.jboss.logging.Message;
 import org.jboss.logging.MessageBundle;
 import org.jboss.logging.Messages;
@@ -97,4 +98,7 @@ public interface MetadataMessages {
 
     @Message(id = 10711, value = "Cannot obtain Bundle-SymbolicName")
     BundleException bundleCannotObtainBundleSymbolicName();
+
+    @Message(id = 10712, value = "Invalid OSGi metadata")
+    BundleException bundleInvalidMetadata(@Cause Throwable cause);
 }
