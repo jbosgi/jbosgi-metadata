@@ -217,6 +217,13 @@ public interface OSGiMetaData {
     boolean isSingleton();
 
     /**
+     * Whether the bundle is a fragment
+     *
+     * @return true when it is a fragment
+     */
+    boolean isFragment();
+
+    /**
      * Returns the initial start level of the bundle.
      *
      * @return The initial start level of the bundle or -1 when the initial bundle start level has not been defined for this

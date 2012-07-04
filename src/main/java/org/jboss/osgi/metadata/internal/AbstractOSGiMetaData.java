@@ -5,16 +5,16 @@
  * Copyright (C) 2010 - 2012 JBoss by Red Hat
  * %%
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as 
- * published by the Free Software Foundation, either version 2.1 of the 
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Lesser Public License for more details.
- * 
- * You should have received a copy of the GNU General Lesser Public 
+ *
+ * You should have received a copy of the GNU General Lesser Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/lgpl-2.1.html>.
  * #L%
@@ -114,6 +114,7 @@ public abstract class AbstractOSGiMetaData implements OSGiMetaData {
 
     protected abstract String getMainAttribute(String key);
 
+    @Override
     @SuppressWarnings({ "unchecked" })
     public Dictionary<String, String> getHeaders() {
         Map<Name, String> attributes = getMainAttributes();
@@ -124,55 +125,68 @@ public abstract class AbstractOSGiMetaData implements OSGiMetaData {
         return new CaseInsensitiveDictionary(result);
     }
 
+    @Override
     public String getHeader(String key) {
         return get(key, STRING_VC);
     }
 
+    @Override
     public ActivationPolicyMetaData getBundleActivationPolicy() {
         return get(BUNDLE_ACTIVATIONPOLICY, ACTIVATION_POLICY_VC);
     }
 
+    @Override
     public String getBundleActivator() {
         return get(BUNDLE_ACTIVATOR, STRING_VC);
     }
 
+    @Override
     public List<String> getBundleCategory() {
         return get(BUNDLE_CATEGORY, STRING_LIST_VC);
     }
 
+    @Override
     public List<String> getBundleClassPath() {
         return get(BUNDLE_CLASSPATH, STRING_LIST_VC);
     }
 
+    @Override
     public String getBundleDescription() {
         return get(BUNDLE_DESCRIPTION, STRING_VC);
     }
 
+    @Override
     public String getBundleLocalization() {
         return get(BUNDLE_LOCALIZATION, STRING_VC, BUNDLE_LOCALIZATION_DEFAULT_BASENAME);
     }
 
+    @Override
     public int getBundleManifestVersion() {
         return get(BUNDLE_MANIFESTVERSION, INTEGER_VC, 1);
     }
 
+    @Override
     public String getBundleName() {
         return get(BUNDLE_NAME, STRING_VC);
     }
 
+    @Override
     public List<ParameterizedAttribute> getBundleNativeCode() {
         return get(BUNDLE_NATIVECODE, NATIVE_CODE_ATTRIB_LIST_VC);
     }
 
+    @Override
     public List<String> getRequiredExecutionEnvironment() {
         return get(BUNDLE_REQUIREDEXECUTIONENVIRONMENT, STRING_LIST_VC);
     }
 
+    @Override
     public String getBundleSymbolicName() {
         ParameterizedAttribute parameters = parseSymbolicName();
         return (parameters != null ? parameters.getAttribute() : null);
     }
 
+    @Override
     public Version getBundleVersion() {
         try {
             return get(BUNDLE_VERSION, VERSION_VC, Version.emptyVersion);
@@ -187,39 +201,52 @@ public abstract class AbstractOSGiMetaData implements OSGiMetaData {
         }
     }
 
+    @Override
     public ParameterizedAttribute getBundleParameters() {
         return parseSymbolicName();
     }
 
+    @Override
     public URL getBundleUpdateLocation() {
         return get(BUNDLE_UPDATELOCATION, URL_VC);
     }
 
+    @Override
     public List<PackageAttribute> getDynamicImports() {
         return get(DYNAMICIMPORT_PACKAGE, PACKAGE_LIST_VC);
     }
 
+    @Override
     public List<PackageAttribute> getExportPackages() {
         return get(EXPORT_PACKAGE, PACKAGE_LIST_VC);
     }
 
+    @Override
     public ParameterizedAttribute getFragmentHost() {
         return get(FRAGMENT_HOST, PARAM_ATTRIB_VC);
     }
 
+    @Override
     public List<PackageAttribute> getImportPackages() {
         return get(IMPORT_PACKAGE, PACKAGE_LIST_VC);
     }
 
+    @Override
     public List<ParameterizedAttribute> getRequireBundles() {
         return get(REQUIRE_BUNDLE, QNAME_ATTRIB_LIST_VC);
     }
 
+    @Override
     public boolean isSingleton() {
         parseSymbolicName();
         if (parameters == null)
             return false;
         return "true".equals(parameters.getDirectiveValue(Constants.SINGLETON_DIRECTIVE, String.class));
+    }
+
+    @Override
+    public boolean isFragment() {
+        return getFragmentHost() != null;
     }
 
     public String getFragmentAttachment() {
@@ -261,6 +288,7 @@ public abstract class AbstractOSGiMetaData implements OSGiMetaData {
         }
     }
 
+    @Override
     public int getInitialStartLevel() {
         return initialStartLevel;
     }
