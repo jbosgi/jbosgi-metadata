@@ -101,14 +101,10 @@ import org.osgi.framework.Version;
  */
 public abstract class AbstractOSGiMetaData implements OSGiMetaData {
 
-    private static final int START_LEVEL_NOT_DEFINED = -1;
-
     // The cached attributes
     protected transient Map<String, Object> cachedAttributes = new ConcurrentHashMap<String, Object>();
     // The parameters on the Bundle-SymbolicName
     protected transient ParameterizedAttribute parameters;
-    // The initial bundle start level if it has been defined for this bundle.
-    protected transient int initialStartLevel = START_LEVEL_NOT_DEFINED;
 
     protected abstract Map<Name, String> getMainAttributes();
 
@@ -237,6 +233,16 @@ public abstract class AbstractOSGiMetaData implements OSGiMetaData {
     }
 
     @Override
+    public List<ParameterizedAttribute> getProvidedCapabilities() {
+        return get("Provide-Capability", QNAME_ATTRIB_LIST_VC);
+    }
+
+    @Override
+    public List<ParameterizedAttribute> getRequiredCapabilities() {
+        return get("Require-Capability", QNAME_ATTRIB_LIST_VC);
+    }
+
+    @Override
     public boolean isSingleton() {
         parseSymbolicName();
         if (parameters == null)
@@ -286,15 +292,6 @@ public abstract class AbstractOSGiMetaData implements OSGiMetaData {
             }
             return value;
         }
-    }
-
-    @Override
-    public int getInitialStartLevel() {
-        return initialStartLevel;
-    }
-
-    public void setInitialStartLevel(int sl) {
-        initialStartLevel = sl;
     }
 
     public Map<String, Object> getCachedAttributes() {

@@ -205,9 +205,23 @@ public interface OSGiMetaData {
     /**
      * Get the required exports
      *
-     * @return required exports from anoter bundle
+     * @return required bundles
      */
     List<ParameterizedAttribute> getRequireBundles();
+
+    /**
+     * Get the provided capabilities
+     *
+     * @return provided capabilities
+     */
+    List<ParameterizedAttribute> getProvidedCapabilities();
+
+    /**
+     * Get the required capabilities
+     *
+     * @return required capabilities
+     */
+    List<ParameterizedAttribute> getRequiredCapabilities();
 
     /**
      * Whether the bundle is a singleton
@@ -222,14 +236,6 @@ public interface OSGiMetaData {
      * @return true when it is a fragment
      */
     boolean isFragment();
-
-    /**
-     * Returns the initial start level of the bundle.
-     *
-     * @return The initial start level of the bundle or -1 when the initial bundle start level has not been defined for this
-     *         bundle.
-     */
-    int getInitialStartLevel();
 
     /**
      * Validate the this metadata
