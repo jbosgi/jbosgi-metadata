@@ -19,7 +19,7 @@
  */
 package org.jboss.osgi.metadata;
 
-import static org.jboss.osgi.metadata.internal.MetadataMessages.MESSAGES;
+import static org.jboss.osgi.metadata.MetadataMessages.MESSAGES;
 
 import java.util.ArrayList;
 import java.util.Dictionary;

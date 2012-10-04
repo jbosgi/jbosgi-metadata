@@ -19,7 +19,7 @@
  */
 package org.jboss.osgi.metadata.internal;
 
-import static org.jboss.osgi.metadata.internal.MetadataLogger.LOGGER;
+import static org.jboss.osgi.metadata.MetadataLogger.LOGGER;
 import static org.osgi.framework.Constants.BUNDLE_SYMBOLICNAME_ATTRIBUTE;
 import static org.osgi.framework.Constants.BUNDLE_VERSION_ATTRIBUTE;
 import static org.osgi.framework.Constants.RESOLUTION_DIRECTIVE;
@@ -42,7 +42,7 @@ import org.jboss.osgi.metadata.VersionRange;
  * @author <a href="mailto:ales.justin@jboss.com">Ales Justin</a>
  * @author Thomas.Diesler@jboss.com
  */
-public class OSGiParameters {
+class OSGiParameters {
 
     protected Map<String, Parameter> parameters;
     protected Map<String, Object> cachedAttributes;

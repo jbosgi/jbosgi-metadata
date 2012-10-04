@@ -23,12 +23,13 @@ import java.io.Serializable;
 
 import org.jboss.osgi.metadata.ListenerMetaData;
 
+
 /**
  * Simple listener meta data. Referencing ref bean as a reference listener.
  * 
  * @author <a href="mailto:ales.justin@jboss.com">Ales Justin</a>
  */
-public class AbstractListenerMetaData implements ListenerMetaData, Serializable {
+class AbstractListenerMetaData implements ListenerMetaData, Serializable {
     private static final long serialVersionUID = 1l;
 
     private String ref;

@@ -19,6 +19,7 @@
  */
 package org.jboss.osgi.metadata;
 
+
 /**
  * A package, includes version and properties.
  * 

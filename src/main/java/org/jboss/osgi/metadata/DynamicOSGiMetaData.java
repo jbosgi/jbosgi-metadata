@@ -19,7 +19,7 @@
  */
 package org.jboss.osgi.metadata;
 
-import static org.jboss.osgi.metadata.internal.MetadataMessages.MESSAGES;
+import static org.jboss.osgi.metadata.MetadataMessages.MESSAGES;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -30,7 +30,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.jar.Attributes.Name;
 
-import org.jboss.osgi.metadata.internal.AbstractOSGiMetaData;
+import org.jboss.osgi.metadata.spi.AbstractOSGiMetaData;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 

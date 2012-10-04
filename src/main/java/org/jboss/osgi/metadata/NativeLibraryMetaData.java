@@ -19,11 +19,12 @@
  */
 package org.jboss.osgi.metadata;
 
-import static org.jboss.osgi.metadata.internal.MetadataMessages.MESSAGES;
+import static org.jboss.osgi.metadata.MetadataMessages.MESSAGES;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+
 
 /**
  * Meta data for native code libraries as defined by OSGi R4V42.

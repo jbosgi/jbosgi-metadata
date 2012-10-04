@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.jboss.osgi.metadata.ParameterizedAttribute;
 
+
 /**
  * Create paramertized attribute from string attribute.
  * 

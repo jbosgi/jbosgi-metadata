@@ -21,8 +21,8 @@ package org.jboss.osgi.metadata.internal;
 
 import java.util.List;
 
-import org.jboss.osgi.metadata.ManifestParser;
 import org.jboss.osgi.metadata.ParameterizedAttribute;
+
 
 /**
  * Create path attribute list from string attribute for Native Code manifest header. The Native Code header is specific in that it
@@ -30,7 +30,7 @@ import org.jboss.osgi.metadata.ParameterizedAttribute;
  *
  * @author David Bosschaert
  */
-public class NativeCodeAttributeListValueCreator extends ParameterizedAttributeListValueCreator {
+class NativeCodeAttributeListValueCreator extends ParameterizedAttributeListValueCreator {
     @Override
     protected void parseAttribute(String attribute, List<ParameterizedAttribute> list, boolean trace) {
         ManifestParser.parse(attribute, list, false, true);

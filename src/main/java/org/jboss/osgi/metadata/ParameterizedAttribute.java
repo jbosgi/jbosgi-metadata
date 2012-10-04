@@ -21,6 +21,7 @@ package org.jboss.osgi.metadata;
 
 import java.util.Map;
 
+
 /**
  * Attribute with parameters.
  * 

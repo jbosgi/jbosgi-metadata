@@ -19,12 +19,13 @@
  */
 package org.jboss.osgi.metadata.internal;
 
-import static org.jboss.osgi.metadata.internal.MetadataLogger.LOGGER;
+import static org.jboss.osgi.metadata.MetadataLogger.LOGGER;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.osgi.metadata.ParameterizedAttribute;
+
 
 /**
  * Create parameterized attribute list from string attribute.

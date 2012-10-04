@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.jboss.osgi.metadata.ActivationPolicyMetaData;
 
+
 /**
  * Activation policy value creator.
  * 

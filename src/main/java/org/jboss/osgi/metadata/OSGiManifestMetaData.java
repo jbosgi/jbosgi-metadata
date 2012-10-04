@@ -29,7 +29,8 @@ import java.util.Map;
 import java.util.jar.Attributes.Name;
 import java.util.jar.Manifest;
 
-import org.jboss.osgi.metadata.internal.AbstractOSGiMetaData;
+import org.jboss.osgi.metadata.spi.AbstractOSGiMetaData;
+
 
 /**
  * Abstract OSGi meta data.

@@ -22,6 +22,7 @@ package org.jboss.osgi.metadata;
 import java.net.URL;
 import java.util.Dictionary;
 import java.util.List;
+
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Version;
 

@@ -24,12 +24,13 @@ import java.util.List;
 
 import org.jboss.osgi.metadata.ActivationPolicyMetaData;
 
+
 /**
  * Activation policy impl.
  * 
  * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  */
-public class AbstractActivationPolicyMetaData implements ActivationPolicyMetaData, Serializable {
+class AbstractActivationPolicyMetaData implements ActivationPolicyMetaData, Serializable {
     private static final long serialVersionUID = 1L;
 
     private String type = "lazy";

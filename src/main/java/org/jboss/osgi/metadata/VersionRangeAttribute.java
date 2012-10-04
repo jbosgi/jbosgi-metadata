@@ -19,6 +19,7 @@
  */
 package org.jboss.osgi.metadata;
 
+
 /**
  * Attribute with VersionRange attribute.
  * 

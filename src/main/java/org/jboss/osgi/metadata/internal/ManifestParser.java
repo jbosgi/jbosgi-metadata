@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,18 +39,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jboss.osgi.metadata;
+package org.jboss.osgi.metadata.internal;
 
-import static org.jboss.osgi.metadata.internal.MetadataMessages.MESSAGES;
+import static org.jboss.osgi.metadata.MetadataMessages.MESSAGES;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.osgi.metadata.internal.AbstractPackageAttribute;
-import org.jboss.osgi.metadata.internal.AbstractParameter;
-import org.jboss.osgi.metadata.internal.AbstractParameterizedAttribute;
+import org.jboss.osgi.metadata.PackageAttribute;
+import org.jboss.osgi.metadata.Parameter;
+import org.jboss.osgi.metadata.ParameterizedAttribute;
+
 
 /**
  * ManifestParser.
@@ -108,7 +109,7 @@ public class ManifestParser {
 
         // Now parse each clause
         for (String clause : clauses) {
-            // Split the cause into paths, directives and attributes using the semi-colon
+            // Split the clause into paths, directives and attributes using the semi-colon
             // Like this: path; path; dir1:=dirval1; dir2:=dirval2; attr1=attrval1; attr2=attrval2
             List<String> pieces = parseDelimitedString(clause, ";");
 
@@ -184,6 +185,8 @@ public class ManifestParser {
             return string;
         if (string.charAt(0) == '\"' && string.charAt(string.length() - 1) == '\"')
             return string.substring(1, string.length() - 1);
+        if (string.charAt(0) == '\'' && string.charAt(string.length() - 1) == '\'')
+            return string.substring(1, string.length() - 1);
         return string;
     }
 
@@ -215,7 +218,7 @@ public class ManifestParser {
             char c = value.charAt(i);
 
             boolean isDelimiter = (delim.indexOf(c) >= 0);
-            boolean isQuote = (c == '"');
+            boolean isQuote = (c == '"') || (c == '\'');
 
             if (isDelimiter && ((expecting & DELIMITER) > 0)) {
                 list.add(sb.toString().trim());

@@ -19,7 +19,7 @@
  */
 package org.jboss.osgi.metadata.internal;
 
-import static org.jboss.osgi.metadata.internal.MetadataMessages.MESSAGES;
+import static org.jboss.osgi.metadata.MetadataMessages.MESSAGES;
 
 import java.util.Collections;
 import java.util.Map;
@@ -27,13 +27,14 @@ import java.util.Map;
 import org.jboss.osgi.metadata.Parameter;
 import org.jboss.osgi.metadata.ParameterizedAttribute;
 
+
 /**
  * Parameter attribute impl.
  * 
  * @author <a href="mailto:ales.justin@jboss.com">Ales Justin</a>
  * @author Thomas.Diesler@jboss.com
  */
-public class AbstractParameterizedAttribute extends AbstractAttributeAware implements ParameterizedAttribute {
+class AbstractParameterizedAttribute extends AbstractAttributeAware implements ParameterizedAttribute {
 
     protected Map<String, Parameter> attributes;
     protected Map<String, Parameter> directives;
