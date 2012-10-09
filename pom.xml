@@ -34,7 +34,7 @@
     <artifactId>jbosgi-metadata</artifactId>
     <packaging>jar</packaging>
 
-    <version>2.1.1.CR8-SNAPSHOT</version>
+    <version>2.1.1.CR9-SNAPSHOT</version>
 
     <!-- Source -->
     <scm>
@@ -45,8 +45,10 @@
 
     <!-- Properties -->
     <properties>
-        <version.jboss.logging>3.1.1.GA</version.jboss.logging>
-        <version.jboss.logging.processor>1.0.3.Final</version.jboss.logging.processor>
+        <version.jboss.logging>3.1.2.GA</version.jboss.logging>
+        <version.jboss.logging.processor>1.1.0.Beta1</version.jboss.logging.processor>
+        <version.jboss.shrinkwrap>1.0.0</version.jboss.shrinkwrap>
+        <version.junit>4.10</version.junit>
         <version.osgi.core>4.2.0</version.osgi.core>
     </properties>
 
@@ -65,10 +67,23 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.jboss.shrinkwrap</groupId>
+            <artifactId>shrinkwrap-api</artifactId>
+            <version>${version.jboss.shrinkwrap}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
             <version>${version.osgi.core}</version>
             <scope>provided</scope>
+        </dependency>
+        <!-- Test Dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${version.junit}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

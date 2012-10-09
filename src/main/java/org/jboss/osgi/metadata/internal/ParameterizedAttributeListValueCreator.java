@@ -19,7 +19,7 @@
  */
 package org.jboss.osgi.metadata.internal;
 
-import static org.jboss.osgi.metadata.internal.MetadataLogger.LOGGER;
+import static org.jboss.osgi.metadata.MetadataLogger.LOGGER;
 
 import java.util.ArrayList;
 import java.util.List;

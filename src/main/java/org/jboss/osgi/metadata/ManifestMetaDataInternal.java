@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,14 +37,14 @@ import org.jboss.osgi.metadata.internal.AbstractOSGiMetaData;
  * @author Thomas.Diesler@jboss.com
  * @since 04-Jun-2010
  */
-class OSGiManifestMetaData extends AbstractOSGiMetaData implements Externalizable {
+class ManifestMetaDataInternal extends AbstractOSGiMetaData implements Externalizable {
     private Manifest manifest;
 
-    public OSGiManifestMetaData() {
+    public ManifestMetaDataInternal() {
         // for serialization
     }
 
-    OSGiManifestMetaData(Manifest manifest) {
+    ManifestMetaDataInternal(Manifest manifest) {
         this.manifest = manifest;
     }
 

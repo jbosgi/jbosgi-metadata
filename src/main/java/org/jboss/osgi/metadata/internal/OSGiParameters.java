@@ -19,7 +19,7 @@
  */
 package org.jboss.osgi.metadata.internal;
 
-import static org.jboss.osgi.metadata.internal.MetadataLogger.LOGGER;
+import static org.jboss.osgi.metadata.MetadataLogger.LOGGER;
 import static org.osgi.framework.Constants.BUNDLE_SYMBOLICNAME_ATTRIBUTE;
 import static org.osgi.framework.Constants.BUNDLE_VERSION_ATTRIBUTE;
 import static org.osgi.framework.Constants.RESOLUTION_DIRECTIVE;

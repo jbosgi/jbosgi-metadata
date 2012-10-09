@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,40 +17,18 @@
  * limitations under the License.
  * #L%
  */
+package org.jboss.osgi.metadata.internal;
 
-// This class is based on some original classes from
-// Apache Felix which is licensed as below
-
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-package org.jboss.osgi.metadata;
-
-import static org.jboss.osgi.metadata.internal.MetadataMessages.MESSAGES;
+import static org.jboss.osgi.metadata.MetadataMessages.MESSAGES;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.osgi.metadata.internal.AbstractPackageAttribute;
-import org.jboss.osgi.metadata.internal.AbstractParameter;
-import org.jboss.osgi.metadata.internal.AbstractParameterizedAttribute;
+import org.jboss.osgi.metadata.PackageAttribute;
+import org.jboss.osgi.metadata.Parameter;
+import org.jboss.osgi.metadata.ParameterizedAttribute;
 
 /**
  * ManifestParser.
@@ -104,13 +82,13 @@ public class ManifestParser {
         // Split the header into clauses using which are seperated by commas
         // Like this: path; path; dir1:=dirval1; dir2:=dirval2; attr1=attrval1; attr2=attrval2,
         // path; path; dir1:=dirval1; dir2:=dirval2; attr1=attrval1; attr2=attrval2
-        List<String> clauses = parseDelimitedString(header, ",");
+        List<String> clauses = parseDelimitedString(header, ',');
 
         // Now parse each clause
         for (String clause : clauses) {
-            // Split the cause into paths, directives and attributes using the semi-colon
+            // Split the clause into paths, directives and attributes using the semi-colon
             // Like this: path; path; dir1:=dirval1; dir2:=dirval2; attr1=attrval1; attr2=attrval2
-            List<String> pieces = parseDelimitedString(clause, ";");
+            List<String> pieces = parseDelimitedString(clause, ';');
 
             // Collect the paths they should be first
             List<String> paths = new ArrayList<String>();
@@ -184,6 +162,8 @@ public class ManifestParser {
             return string;
         if (string.charAt(0) == '\"' && string.charAt(string.length() - 1) == '\"')
             return string.substring(1, string.length() - 1);
+        if (string.charAt(0) == '\'' && string.charAt(string.length() - 1) == '\'')
+            return string.substring(1, string.length() - 1);
         return string;
     }
 
@@ -196,7 +176,7 @@ public class ManifestParser {
      * @param delim the characters delimiting the tokens.
      * @return an array of string tokens or null if there were no tokens.
      **/
-    private static List<String> parseDelimitedString(String value, String delim) {
+    private static List<String> parseDelimitedString(String value, char delim) {
         if (value == null)
             value = "";
 
@@ -214,8 +194,8 @@ public class ManifestParser {
         for (int i = 0; i < value.length(); i++) {
             char c = value.charAt(i);
 
-            boolean isDelimiter = (delim.indexOf(c) >= 0);
-            boolean isQuote = (c == '"');
+            boolean isDelimiter = delim == c;
+            boolean isQuote = (c == '"') || (c == '\'');
 
             if (isDelimiter && ((expecting & DELIMITER) > 0)) {
                 list.add(sb.toString().trim());

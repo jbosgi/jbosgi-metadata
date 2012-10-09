@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,7 @@
  */
 package org.jboss.osgi.metadata;
 
-import static org.jboss.osgi.metadata.internal.MetadataMessages.MESSAGES;
+import static org.jboss.osgi.metadata.MetadataMessages.MESSAGES;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -42,10 +42,10 @@ import org.osgi.framework.Version;
  * @author Thomas.Diesler@jboss.com
  * @since 04-Jun-2010
  */
-class DynamicOSGiMetaData extends AbstractOSGiMetaData implements Externalizable {
+class DynamicMetaDataInternal extends AbstractOSGiMetaData implements Externalizable {
     private Map<Name, String> attributes = new LinkedHashMap<Name, String>();
 
-    DynamicOSGiMetaData(String symbolicName, Version version) {
+    DynamicMetaDataInternal(String symbolicName, Version version) {
         if (symbolicName == null)
             throw MESSAGES.illegalArgumentNull("symbolicName");
         if (version == null)

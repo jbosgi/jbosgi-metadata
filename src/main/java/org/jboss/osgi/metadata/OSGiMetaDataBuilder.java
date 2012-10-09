@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,7 @@
  */
 package org.jboss.osgi.metadata;
 
-import static org.jboss.osgi.metadata.internal.MetadataMessages.MESSAGES;
+import static org.jboss.osgi.metadata.MetadataMessages.MESSAGES;
 
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -39,8 +39,8 @@ import org.osgi.framework.Version;
  * @author Thomas.Diesler@jboss.com
  * @since 04-Jun-2010
  */
-public class OSGiMetaDataBuilder {
-    private DynamicOSGiMetaData metadata;
+public final class OSGiMetaDataBuilder {
+    private DynamicMetaDataInternal metadata;
     private List<String> importPackages = new ArrayList<String>();
     private List<String> exportPackages = new ArrayList<String>();
     private List<String> requiredBundles = new ArrayList<String>();
@@ -90,7 +90,7 @@ public class OSGiMetaDataBuilder {
     public static OSGiMetaData load(Manifest manifest) {
         if (manifest == null)
             throw MESSAGES.illegalArgumentNull("manifest");
-        return new OSGiManifestMetaData(manifest);
+        return new ManifestMetaDataInternal(manifest);
     }
 
     /**
@@ -163,7 +163,7 @@ public class OSGiMetaDataBuilder {
     }
 
     private OSGiMetaDataBuilder(String symbolicName, Version version) {
-        metadata = new DynamicOSGiMetaData(symbolicName, version);
+        metadata = new DynamicMetaDataInternal(symbolicName, version);
     }
 
     public OSGiMetaDataBuilder setBundleManifestVersion(int version) {

@@ -21,7 +21,6 @@ package org.jboss.osgi.metadata.internal;
 
 import java.util.List;
 
-import org.jboss.osgi.metadata.ManifestParser;
 import org.jboss.osgi.metadata.ParameterizedAttribute;
 
 /**

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,8 @@
  */
 package org.jboss.osgi.metadata;
 
-import static org.jboss.osgi.metadata.internal.MetadataMessages.MESSAGES;
+
+import static org.jboss.osgi.metadata.MetadataMessages.MESSAGES;
 
 import java.io.Serializable;
 import java.util.List;
@@ -27,9 +28,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Meta data for native code libraries as defined by OSGi R4V42.
- * 
+ *
  * 3.9 Loading Native Code Libraries http://www.osgi.org/Download/File?url=/download/r4v42/r4.core.pdf
- * 
+ *
  * @author Thomas.Diesler@jboss.com
  * @since 21-Jan-2010
  */
