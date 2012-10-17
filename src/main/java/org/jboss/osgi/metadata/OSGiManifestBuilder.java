@@ -198,6 +198,7 @@ public final class OSGiManifestBuilder implements Asset {
         return this;
     }
 
+    @SuppressWarnings("deprecation")
     public Manifest getManifest() {
         if (manifest == null) {
             // Require-Bundle
