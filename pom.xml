@@ -34,7 +34,7 @@
     <artifactId>jbosgi-metadata</artifactId>
     <packaging>jar</packaging>
 
-    <version>2.1.1.CR10-SNAPSHOT</version>
+    <version>3.0.0.Alpha1-SNAPSHOT</version>
 
     <!-- Source -->
     <scm>
@@ -49,7 +49,7 @@
         <version.jboss.logging.processor>1.1.0.Beta1</version.jboss.logging.processor>
         <version.jboss.shrinkwrap>1.0.0</version.jboss.shrinkwrap>
         <version.junit>4.10</version.junit>
-        <version.osgi.core>4.2.0</version.osgi.core>
+        <version.osgi.core>5.0.0</version.osgi.core>
     </properties>
 
     <dependencies>
