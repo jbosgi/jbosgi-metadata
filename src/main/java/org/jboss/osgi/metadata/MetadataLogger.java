@@ -49,4 +49,7 @@ public interface MetadataLogger extends BasicLogger {
     @Message(id = 10601, value = "Cannot create URL from: %s")
     void warnCannotCreateURL(String attribute);
 
+    @LogMessage(level = WARN)
+    @Message(id = 10602, value = "Ignore duplicate manifest entry: %s")
+    void warnIgnoreDuplicateEntry(String entry);
 }

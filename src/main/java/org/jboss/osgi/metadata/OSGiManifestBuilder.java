@@ -42,15 +42,15 @@
  */
 package org.jboss.osgi.metadata;
 
+import static org.jboss.osgi.metadata.MetadataLogger.LOGGER;
 import static org.jboss.osgi.metadata.MetadataMessages.MESSAGES;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -58,6 +58,7 @@ import org.jboss.shrinkwrap.api.asset.Asset;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 
 /**
  * A simple OSGi manifest builder.
@@ -68,13 +69,13 @@ import org.osgi.framework.Version;
 public final class OSGiManifestBuilder implements Asset {
 
     private final ManifestBuilder delegate = ManifestBuilder.newInstance();
-    private final Set<String> importPackages = new LinkedHashSet<String>();
-    private final Set<String> exportPackages = new LinkedHashSet<String>();
-    private final Set<String> dynamicImportPackages = new LinkedHashSet<String>();
-    private final Set<String> requiredBundles = new LinkedHashSet<String>();
-    private final Set<String> requiredEnvironments = new LinkedHashSet<String>();
-    private final Set<String> providedCapabilities = new LinkedHashSet<String>();
-    private final Set<String> requiredCapabilities = new LinkedHashSet<String>();
+    private final Map<String, String> importPackages = new LinkedHashMap<String, String>();
+    private final Map<String, String> exportPackages = new LinkedHashMap<String, String>();
+    private final Map<String, String> dynamicImportPackages = new LinkedHashMap<String, String>();
+    private final Map<String, String> requiredBundles = new LinkedHashMap<String, String>();
+    private final Map<String, String> requiredEnvironments = new LinkedHashMap<String, String>();
+    private final Map<String, String> providedCapabilities = new LinkedHashMap<String, String>();
+    private final Map<String, String> requiredCapabilities = new LinkedHashMap<String, String>();
     private Manifest manifest;
 
     public static OSGiManifestBuilder newInstance() {
@@ -132,170 +133,197 @@ public final class OSGiManifestBuilder implements Asset {
         return this;
     }
 
+    public OSGiManifestBuilder addFragmentHost(String fragmentHost, VersionRange version) {
+        String bundleSpec = fragmentHost;
+        if (version != null) {
+            bundleSpec += ";bundle-version=\"" + version + "\"";
+        }
+        delegate.append(Constants.FRAGMENT_HOST + ": " + bundleSpec);
+        return this;
+    }
+
     public OSGiManifestBuilder addManifestHeader(String key, String value) {
         delegate.addManifestHeader(key, value);
         return this;
     }
 
     public OSGiManifestBuilder addRequireBundle(String requiredBundle) {
-        requiredBundles.add(requiredBundle);
+        return addRequireBundle(requiredBundle, null);
+    }
+
+    public OSGiManifestBuilder addRequireBundle(String requiredBundle, VersionRange version) {
+        String entry = requiredBundle;
+        if (version != null) {
+            entry += ";bundle-version=\"" + version + "\"";
+        }
+        addEntry(requiredBundles, entry);
         return this;
     }
 
     public OSGiManifestBuilder addRequireExecutionEnvironment(String... environments) {
-        for (String aux : environments) {
-            requiredEnvironments.add(aux);
+        for (String entry : environments) {
+            addEntry(requiredEnvironments, entry);
         }
         return this;
     }
 
     public OSGiManifestBuilder addImportPackages(Class<?>... packages) {
         for (Class<?> aux : packages) {
-            importPackages.add(aux.getPackage().getName());
+            addImportPackage(aux.getPackage(), null);
+        }
+        return this;
+    }
+
+    public OSGiManifestBuilder addImportPackages(Package... packages) {
+        for (Package aux : packages) {
+            addImportPackage(aux, null);
         }
         return this;
     }
 
     public OSGiManifestBuilder addImportPackages(String... packages) {
         for (String aux : packages) {
-            importPackages.add(aux);
+            addImportPackage(aux);
         }
         return this;
     }
 
-    public OSGiManifestBuilder addDynamicImportPackages(String... packages) {
-        for (String aux : packages) {
-            dynamicImportPackages.add(aux);
+    public OSGiManifestBuilder addImportPackage(Class<?> imported, VersionRange version) {
+        return addImportPackage(imported.getPackage(), version);
+    }
+
+    public OSGiManifestBuilder addImportPackage(Package imported, VersionRange version) {
+        return addImportPackage(imported.getName(), version);
+    }
+
+    public OSGiManifestBuilder addImportPackage(String packageName, VersionRange version) {
+        String entry = packageName;
+        if (version != null) {
+            entry += ";version=\"" + version + "\"";
         }
+        addEntry(importPackages, entry);
+        return this;
+    }
+
+    public OSGiManifestBuilder addImportPackage(String packageSpec) {
+        addEntry(importPackages, packageSpec);
+        return this;
+    }
+
+    public OSGiManifestBuilder addDynamicImportPackages(String... packages) {
+        for (String entry : packages) {
+            addEntry(dynamicImportPackages, entry);
+        }
+        return this;
+    }
+
+    public OSGiManifestBuilder addDynamicImportPackage(String packageSpec) {
+        addEntry(dynamicImportPackages, packageSpec);
         return this;
     }
 
     public OSGiManifestBuilder addExportPackages(Class<?>... packages) {
         for (Class<?> aux : packages) {
-            exportPackages.add(aux.getPackage().getName());
+            addExportPackage(aux.getPackage(), null);
+        }
+        return this;
+    }
+
+    public OSGiManifestBuilder addExportPackages(Package... packages) {
+        for (Package aux : packages) {
+            addExportPackage(aux, null);
         }
         return this;
     }
 
     public OSGiManifestBuilder addExportPackages(String... packages) {
         for (String aux : packages) {
-            exportPackages.add(aux);
+            addExportPackage(aux);
         }
         return this;
     }
 
+    public OSGiManifestBuilder addExportPackage(Class<?> exported, Version version) {
+        return addExportPackage(exported.getPackage(), version);
+    }
+
+    public OSGiManifestBuilder addExportPackage(Package exported, Version version) {
+        return addExportPackage(exported.getName(), version);
+    }
+
+    public OSGiManifestBuilder addExportPackage(String packageName, Version version) {
+        String entry = packageName;
+        if (version != null) {
+            entry += ";version=" + version;
+        }
+        addEntry(exportPackages, entry);
+        return this;
+    }
+
+    public OSGiManifestBuilder addExportPackage(String packageSpec) {
+        addEntry(exportPackages, packageSpec);
+        return this;
+    }
+
     public OSGiManifestBuilder addProvidedCapabilities(String... capabilities) {
-        for (String aux : capabilities) {
-            providedCapabilities.add(aux);
+        for (String entry : capabilities) {
+            addEntry(providedCapabilities, entry);
         }
         return this;
     }
 
     public OSGiManifestBuilder addRequiredCapabilities(String... capabilities) {
-        for (String aux : capabilities) {
-            requiredCapabilities.add(aux);
+        for (String entry : capabilities) {
+            addEntry(requiredCapabilities, entry);
         }
         return this;
+    }
+
+    // Strip attributes/directives to avoid duplicates
+    private void addEntry(Map<String, String> target, String entry) {
+        String key = entry;
+        int index = entry.indexOf(";");
+        if (index > 0) {
+            key = entry.substring(0, index);
+        }
+        if (target.get(key) == null) {
+            target.put(key, entry);
+        } else {
+            LOGGER.warnIgnoreDuplicateEntry(entry);
+        }
     }
 
     @SuppressWarnings("deprecation")
     public Manifest getManifest() {
         if (manifest == null) {
-            // Require-Bundle
-            if (requiredBundles.size() > 0) {
-                StringBuffer buffer = new StringBuffer();
-                buffer.append(Constants.REQUIRE_BUNDLE + ": ");
-                Iterator<String> iterator = requiredBundles.iterator();
-                buffer.append(iterator.next());
-                while (iterator.hasNext()) {
-                    buffer.append("," + iterator.next());
-                }
-                delegate.append(buffer.toString());
-            }
-
-            // Bundle-RequiredExecutionEnvironment
-            if (requiredEnvironments.size() > 0) {
-                StringBuffer buffer = new StringBuffer();
-                buffer.append(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT + ": ");
-                Iterator<String> iterator = requiredEnvironments.iterator();
-                buffer.append(iterator.next());
-                while (iterator.hasNext()) {
-                    buffer.append("," + iterator.next());
-                }
-                delegate.append(buffer.toString());
-            }
-
-            // Export-Package
-            if (exportPackages.size() > 0) {
-                StringBuffer buffer = new StringBuffer();
-                buffer.append(Constants.EXPORT_PACKAGE + ": ");
-                Iterator<String> iterator = exportPackages.iterator();
-                buffer.append(iterator.next());
-                while (iterator.hasNext()) {
-                    buffer.append("," + iterator.next());
-                }
-                delegate.append(buffer.toString());
-            }
-
-            // Import-Package
-            if (importPackages.size() > 0) {
-                StringBuffer buffer = new StringBuffer();
-                buffer.append(Constants.IMPORT_PACKAGE + ": ");
-                Iterator<String> iterator = importPackages.iterator();
-                buffer.append(iterator.next());
-                while (iterator.hasNext()) {
-                    buffer.append("," + iterator.next());
-                }
-                delegate.append(buffer.toString());
-            }
-
-            // DynamicImport-Package
-            if (dynamicImportPackages.size() > 0) {
-                StringBuffer buffer = new StringBuffer();
-                buffer.append(Constants.DYNAMICIMPORT_PACKAGE + ": ");
-                Iterator<String> iterator = dynamicImportPackages.iterator();
-                buffer.append(iterator.next());
-                while (iterator.hasNext()) {
-                    buffer.append("," + iterator.next());
-                }
-                delegate.append(buffer.toString());
-            }
-
-            // Provide-Capability
-            if (providedCapabilities.size() > 0) {
-                StringBuffer buffer = new StringBuffer();
-                // [TODO] Replace with R5 constant
-                buffer.append("Provide-Capability" + ": ");
-                Iterator<String> iterator = providedCapabilities.iterator();
-                buffer.append(iterator.next());
-                while (iterator.hasNext()) {
-                    buffer.append("," + iterator.next());
-                }
-                delegate.append(buffer.toString());
-            }
-
-            // Require-Capability
-            if (requiredCapabilities.size() > 0) {
-                StringBuffer buffer = new StringBuffer();
-                // [TODO] Replace with R5 constant
-                buffer.append("Require-Capability" + ": ");
-                Iterator<String> iterator = requiredCapabilities.iterator();
-                buffer.append(iterator.next());
-                while (iterator.hasNext()) {
-                    buffer.append("," + iterator.next());
-                }
-                delegate.append(buffer.toString());
-            }
-
-            Manifest auxmanifest = delegate.getManifest();
+            addManifestHeader(Constants.REQUIRE_BUNDLE, requiredBundles);
+            addManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, requiredEnvironments);
+            addManifestHeader(Constants.EXPORT_PACKAGE, exportPackages);
+            addManifestHeader(Constants.IMPORT_PACKAGE, importPackages);
+            addManifestHeader(Constants.DYNAMICIMPORT_PACKAGE, dynamicImportPackages);
+            addManifestHeader(Constants.PROVIDE_CAPABILITY, providedCapabilities);
+            addManifestHeader(Constants.REQUIRE_CAPABILITY, requiredCapabilities);
+            Manifest aux = delegate.getManifest();
             try {
-                validateBundleManifest(auxmanifest);
+                validateBundleManifest(aux);
             } catch (BundleException ex) {
                 throw new IllegalStateException(ex);
             }
-            manifest = auxmanifest;
+            manifest = aux;
         }
         return manifest;
+    }
+
+    private void addManifestHeader(String header, Map<String, String> source) {
+        if (source.size() > 0) {
+            int i = 0;
+            StringBuffer buffer = new StringBuffer();
+            for (String entry : source.values()) {
+                buffer.append(i++ > 0 ? "," : "");
+                buffer.append(entry);
+            }
+            delegate.append(header + ": " + buffer);
+        }
     }
 
     /**

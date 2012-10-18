@@ -19,12 +19,13 @@
  */
 package org.jboss.osgi.metadata;
 
+import static org.jboss.osgi.metadata.MetadataLogger.LOGGER;
 import static org.jboss.osgi.metadata.MetadataMessages.MESSAGES;
 
-import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
@@ -41,10 +42,10 @@ import org.osgi.framework.Version;
  */
 public final class OSGiMetaDataBuilder {
     private DynamicMetaDataInternal metadata;
-    private List<String> importPackages = new ArrayList<String>();
-    private List<String> exportPackages = new ArrayList<String>();
-    private List<String> requiredBundles = new ArrayList<String>();
-    private List<String> dynamicImportPackages = new ArrayList<String>();
+    private Map<String, String> importPackages = new LinkedHashMap<String, String>();
+    private Map<String, String> exportPackages = new LinkedHashMap<String, String>();
+    private Map<String, String> requiredBundles = new LinkedHashMap<String, String>();
+    private Map<String, String> dynamicImportPackages = new LinkedHashMap<String, String>();
 
     public static OSGiMetaDataBuilder createBuilder(String symbolicName) {
         if (symbolicName == null)
@@ -143,7 +144,7 @@ public final class OSGiMetaDataBuilder {
             if (manifestVersion == 2 && symbolicName == null)
                 throw MESSAGES.bundleCannotObtainBundleSymbolicName();
         } catch (RuntimeException ex) {
-        	throw MESSAGES.bundleInvalidMetadata(ex);
+            throw MESSAGES.bundleInvalidMetadata(ex);
         }
     }
 
@@ -185,7 +186,7 @@ public final class OSGiMetaDataBuilder {
 
     public OSGiMetaDataBuilder addImportPackages(String... packages) {
         for (String aux : packages) {
-            importPackages.add(aux);
+            addEntry(importPackages, aux);
         }
         return this;
     }
@@ -199,7 +200,7 @@ public final class OSGiMetaDataBuilder {
 
     public OSGiMetaDataBuilder addExportPackages(String... packages) {
         for (String aux : packages) {
-            exportPackages.add(aux);
+            addEntry(exportPackages, aux);
         }
         return this;
     }
@@ -213,14 +214,14 @@ public final class OSGiMetaDataBuilder {
 
     public OSGiMetaDataBuilder addDynamicImportPackages(String... packages) {
         for (String aux : packages) {
-            dynamicImportPackages.add(aux);
+            addEntry(dynamicImportPackages, aux);
         }
         return this;
     }
 
     public OSGiMetaDataBuilder addRequiredBundles(String... required) {
         for (String aux : required) {
-            requiredBundles.add(aux);
+            addEntry(requiredBundles, aux);
         }
         return this;
     }
@@ -236,47 +237,38 @@ public final class OSGiMetaDataBuilder {
         return metadata;
     }
 
+    // Strip attributes/directives to avoid duplicates
+    private void addEntry(Map<String, String> target, String entry) {
+        String key = entry;
+        int index = entry.indexOf(";");
+        if (index > 0) {
+            key = entry.substring(0, index);
+        }
+        if (target.get(key) == null) {
+            target.put(key, entry);
+        } else {
+            LOGGER.warnIgnoreDuplicateEntry(entry);
+        }
+    }
+
     private OSGiMetaData getMetaDataInternal() {
-        // Export-Package
-        if (exportPackages.size() > 0) {
-            StringBuffer value = new StringBuffer();
-            for (int i = 0; i < exportPackages.size(); i++) {
-                value.append(i > 0 ? "," : "");
-                value.append(exportPackages.get(i));
-            }
-            metadata.addMainAttribute(Constants.EXPORT_PACKAGE, value.toString());
-        }
-
-        // Import-Package
-        if (importPackages.size() > 0) {
-            StringBuffer value = new StringBuffer();
-            for (int i = 0; i < importPackages.size(); i++) {
-                value.append(i > 0 ? "," : "");
-                value.append(importPackages.get(i));
-            }
-            metadata.addMainAttribute(Constants.IMPORT_PACKAGE, value.toString());
-        }
-
-        // Require-Bundle
-        if (requiredBundles.size() > 0) {
-            StringBuffer value = new StringBuffer();
-            for (int i = 0; i < requiredBundles.size(); i++) {
-                value.append(i > 0 ? "," : "");
-                value.append(requiredBundles.get(i));
-            }
-            metadata.addMainAttribute(Constants.REQUIRE_BUNDLE, value.toString());
-        }
-
-        // DynamicImport-Package
-        if (dynamicImportPackages.size() > 0) {
-            StringBuffer value = new StringBuffer();
-            for (int i = 0; i < dynamicImportPackages.size(); i++) {
-                value.append(i > 0 ? "," : "");
-                value.append(dynamicImportPackages.get(i));
-            }
-            metadata.addMainAttribute(Constants.DYNAMICIMPORT_PACKAGE, value.toString());
-        }
+        addManifestHeader(Constants.EXPORT_PACKAGE, exportPackages);
+        addManifestHeader(Constants.IMPORT_PACKAGE, importPackages);
+        addManifestHeader(Constants.REQUIRE_BUNDLE, requiredBundles);
+        addManifestHeader(Constants.DYNAMICIMPORT_PACKAGE, dynamicImportPackages);
         return metadata;
+    }
+
+    private void addManifestHeader(String header, Map<String, String> source) {
+        if (source.size() > 0) {
+            int i = 0;
+            StringBuffer buffer = new StringBuffer();
+            for (String entry : source.values()) {
+                buffer.append(i++ > 0 ? "," : "");
+                buffer.append(entry);
+            }
+            metadata.addMainAttribute(header, buffer.toString());
+        }
     }
 
     public OSGiMetaData getOSGiMetaData() {

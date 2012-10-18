@@ -61,7 +61,7 @@ public class ManifestParserTestCase {
         OSGiManifestBuilder builder = OSGiManifestBuilder.newInstance();
         builder.addBundleManifestVersion(2);
         builder.addBundleSymbolicName("some.name");
-        builder.addImportPackages(packagespec);
+        builder.addImportPackage(packagespec);
         Manifest manifest = builder.getManifest();
 
         OSGiMetaData metadata = OSGiMetaDataBuilder.load(manifest);
@@ -77,7 +77,7 @@ public class ManifestParserTestCase {
         OSGiManifestBuilder builder = OSGiManifestBuilder.newInstance();
         builder.addBundleManifestVersion(2);
         builder.addBundleSymbolicName("some.name");
-        builder.addImportPackages(packagespec);
+        builder.addImportPackage(packagespec);
         Manifest manifest = builder.getManifest();
 
         OSGiMetaData metadata = OSGiMetaDataBuilder.load(manifest);

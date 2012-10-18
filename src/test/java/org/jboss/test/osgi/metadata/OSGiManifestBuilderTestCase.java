@@ -44,9 +44,9 @@ public class OSGiManifestBuilderTestCase {
         OSGiManifestBuilder builder = OSGiManifestBuilder.newInstance();
         builder.addBundleManifestVersion(2);
         builder.addBundleSymbolicName("example-webapp-negative");
-        builder.addExportPackages("org.jboss.test.osgi.example.webapp");
+        builder.addExportPackage("org.jboss.test.osgi.example.webapp");
         for (String pack : importPackages.split(",")) {
-            builder.addImportPackages(pack);
+            builder.addImportPackage(pack);
         }
         Manifest manifest = builder.getManifest();
         Assert.assertNotNull("Manifest not null", manifest);
