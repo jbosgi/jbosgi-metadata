@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.jboss.osgi.metadata.Parameter;
-import org.jboss.osgi.metadata.VersionRange;
+import org.osgi.framework.VersionRange;
 
 /**
  * OSGi parameter values. Util for transforming parameter info to actual useful values.

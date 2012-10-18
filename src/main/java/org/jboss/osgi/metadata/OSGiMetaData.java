@@ -24,6 +24,7 @@ import java.util.Dictionary;
 import java.util.List;
 
 import org.osgi.framework.BundleException;
+import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 
 /**

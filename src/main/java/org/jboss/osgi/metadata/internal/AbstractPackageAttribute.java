@@ -26,8 +26,8 @@ import java.util.Map;
 
 import org.jboss.osgi.metadata.PackageAttribute;
 import org.jboss.osgi.metadata.Parameter;
-import org.jboss.osgi.metadata.VersionRange;
 import org.osgi.framework.Constants;
+import org.osgi.framework.VersionRange;
 
 /**
  * Package attribute impl.
@@ -57,7 +57,7 @@ public class AbstractPackageAttribute extends AbstractParameterizedAttribute imp
                     throw MESSAGES.illegalArgumentDuplicateVersionParameter();
                 Object value = parameter.getValue();
                 if (value != null) {
-                    versionRange = VersionRange.parse(value.toString());
+                    versionRange = new VersionRange(value.toString());
                 }
             }
         }

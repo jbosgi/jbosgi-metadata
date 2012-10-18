@@ -31,8 +31,8 @@ import org.jboss.osgi.metadata.OSGiMetaData;
 import org.jboss.osgi.metadata.OSGiMetaDataBuilder;
 import org.jboss.osgi.metadata.PackageAttribute;
 import org.jboss.osgi.metadata.Parameter;
-import org.jboss.osgi.metadata.VersionRange;
 import org.junit.Test;
+import org.osgi.framework.VersionRange;
 
 /**
  * Test the Manifest parser
@@ -85,6 +85,6 @@ public class ManifestParserTestCase {
         Assert.assertEquals(1, packages.size());
         PackageAttribute pattr = packages.get(0);
         Assert.assertEquals("org.osgi.service.blueprint", pattr.getPackageName());
-        Assert.assertEquals(VersionRange.parse("[1,2)"), pattr.getVersion());
+        Assert.assertEquals(new VersionRange("[1,2)"), pattr.getVersion());
     }
 }
