@@ -197,11 +197,11 @@ public final class OSGiManifestBuilder implements Asset {
     }
 
     public OSGiManifestBuilder addImportPackage(String packageName, VersionRange version) {
-        String entry = packageName;
+        String packageSpec = packageName;
         if (version != null) {
-            entry += ";version=\"" + version + "\"";
+            packageSpec += ";version=\"" + version + "\"";
         }
-        addEntry(importPackages, entry);
+        addImportPackage(packageSpec);
         return this;
     }
 
@@ -210,15 +210,29 @@ public final class OSGiManifestBuilder implements Asset {
         return this;
     }
 
-    public OSGiManifestBuilder addDynamicImportPackages(String... packages) {
-        for (String entry : packages) {
-            addEntry(dynamicImportPackages, entry);
+    public OSGiManifestBuilder addDynamicImportPackages(Class<?>... imported) {
+        for (Class<?> clazz : imported) {
+            addDynamicImportPackages(clazz.getPackage());
+        }
+        return this;
+    }
+    
+    public OSGiManifestBuilder addDynamicImportPackages(Package... imported) {
+        for (Package aux : imported) {
+            addDynamicImportPackage(aux.getName());
+        }
+        return this;
+    }
+    
+    public OSGiManifestBuilder addDynamicImportPackages(String... imported) {
+        for (String entry : imported) {
+            addDynamicImportPackage(entry);
         }
         return this;
     }
 
-    public OSGiManifestBuilder addDynamicImportPackage(String packageSpec) {
-        addEntry(dynamicImportPackages, packageSpec);
+    public OSGiManifestBuilder addDynamicImportPackage(String imported) {
+        addEntry(dynamicImportPackages, imported);
         return this;
     }
 
@@ -252,11 +266,11 @@ public final class OSGiManifestBuilder implements Asset {
     }
 
     public OSGiManifestBuilder addExportPackage(String packageName, Version version) {
-        String entry = packageName;
+        String packageSpec = packageName;
         if (version != null) {
-            entry += ";version=" + version;
+            packageSpec += ";version=" + version;
         }
-        addEntry(exportPackages, entry);
+        addExportPackage(packageSpec);
         return this;
     }
 
