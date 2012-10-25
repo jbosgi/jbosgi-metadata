@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package org.jboss.osgi.metadata.internal;
+package org.jboss.osgi.metadata.spi;
 
 import static org.jboss.osgi.metadata.internal.ValueCreatorUtil.ACTIVATION_POLICY_VC;
 import static org.jboss.osgi.metadata.internal.ValueCreatorUtil.INTEGER_VC;
@@ -65,6 +65,7 @@ import org.jboss.osgi.metadata.OSGiMetaData;
 import org.jboss.osgi.metadata.OSGiMetaDataBuilder;
 import org.jboss.osgi.metadata.PackageAttribute;
 import org.jboss.osgi.metadata.ParameterizedAttribute;
+import org.jboss.osgi.metadata.internal.ValueCreator;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
