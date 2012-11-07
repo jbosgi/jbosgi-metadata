@@ -29,6 +29,7 @@ import java.util.Map;
 import org.jboss.osgi.metadata.PackageAttribute;
 import org.jboss.osgi.metadata.Parameter;
 import org.jboss.osgi.metadata.ParameterizedAttribute;
+import org.jboss.osgi.metadata.spi.ElementParser;
 
 /**
  * ManifestParser.
@@ -82,13 +83,13 @@ public class ManifestParser {
         // Split the header into clauses using which are seperated by commas
         // Like this: path; path; dir1:=dirval1; dir2:=dirval2; attr1=attrval1; attr2=attrval2,
         // path; path; dir1:=dirval1; dir2:=dirval2; attr1=attrval1; attr2=attrval2
-        List<String> clauses = parseDelimitedString(header, ',');
+        List<String> clauses = ElementParser.parseDelimitedString(header, ',');
 
         // Now parse each clause
         for (String clause : clauses) {
             // Split the clause into paths, directives and attributes using the semi-colon
             // Like this: path; path; dir1:=dirval1; dir2:=dirval2; attr1=attrval1; attr2=attrval2
-            List<String> pieces = parseDelimitedString(clause, ';');
+            List<String> pieces = ElementParser.parseDelimitedString(clause, ';');
 
             // Collect the paths they should be first
             List<String> paths = new ArrayList<String>();
@@ -165,59 +166,6 @@ public class ManifestParser {
         if (string.charAt(0) == '\'' && string.charAt(string.length() - 1) == '\'')
             return string.substring(1, string.length() - 1);
         return string;
-    }
-
-    /**
-     * Parses delimited string and returns an array containing the tokens. This parser obeys quotes, so the delimiter character
-     * will be ignored if it is inside of a quote. This method assumes that the quote character is not included in the set of
-     * delimiter characters.
-     *
-     * @param value the delimited string to parse.
-     * @param delim the characters delimiting the tokens.
-     * @return an array of string tokens or null if there were no tokens.
-     **/
-    private static List<String> parseDelimitedString(String value, char delim) {
-        if (value == null)
-            value = "";
-
-        List<String> list = new ArrayList<String>();
-
-        int CHAR = 1;
-        int DELIMITER = 2;
-        int STARTQUOTE = 4;
-        int ENDQUOTE = 8;
-
-        StringBuilder sb = new StringBuilder();
-
-        int expecting = (CHAR | DELIMITER | STARTQUOTE);
-
-        for (int i = 0; i < value.length(); i++) {
-            char c = value.charAt(i);
-
-            boolean isDelimiter = delim == c;
-            boolean isQuote = (c == '"') || (c == '\'');
-
-            if (isDelimiter && ((expecting & DELIMITER) > 0)) {
-                list.add(sb.toString().trim());
-                sb.delete(0, sb.length());
-                expecting = (CHAR | DELIMITER | STARTQUOTE);
-            } else if (isQuote && ((expecting & STARTQUOTE) > 0)) {
-                sb.append(c);
-                expecting = CHAR | ENDQUOTE;
-            } else if (isQuote && ((expecting & ENDQUOTE) > 0)) {
-                sb.append(c);
-                expecting = (CHAR | STARTQUOTE | DELIMITER);
-            } else if ((expecting & CHAR) > 0) {
-                sb.append(c);
-            } else {
-                throw MESSAGES.illegalArgumentInvalidDelimitedString(value, delim);
-            }
-        }
-
-        if (sb.length() > 0)
-            list.add(sb.toString().trim());
-
-        return list;
     }
 
 }
