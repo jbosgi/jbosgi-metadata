@@ -22,7 +22,7 @@ package org.jboss.osgi.metadata.internal;
 import static org.jboss.osgi.metadata.MetadataMessages.MESSAGES;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -111,29 +111,43 @@ public class ManifestParser {
                     String name = piece.substring(0, seperator);
                     String value = piece.substring(seperator + 2);
                     if (directives == null)
-                        directives = new HashMap<String, Parameter>();
-                    String unquoted = unquote(name);
-                    if (directives.containsKey(unquoted))
-                        throw MESSAGES.illegalArgumentDuplicateDirective(unquoted);
-                    directives.put(unquoted, new AbstractParameter(unquote(value)));
+                        directives = new LinkedHashMap<String, Parameter>();
+                    name = unquote(name.trim());
+                    if (directives.containsKey(name))
+                        throw MESSAGES.illegalArgumentDuplicateDirective(name);
+                    value = unquote(value.trim());
+                    directives.put(name, new AbstractParameter(ValueCreatorUtil.STRING_VC, value));
                 } else {
                     seperator = piece.indexOf("=");
                     if (seperator >= 0) {
                         String name = piece.substring(0, seperator);
                         String value = piece.substring(seperator + 1);
+                        ValueCreator<?> vc = ValueCreatorUtil.STRING_VC;
                         if (attributes == null)
-                            attributes = new HashMap<String, Parameter>();
-                        String unquoted = unquote(name);
-                        Parameter attribute = attributes.get(unquoted);
+                            attributes = new LinkedHashMap<String, Parameter>();
+                        name = unquote(name.trim());
+                        seperator = name.indexOf(":");
+                        if (seperator >= 0) {
+                            String type = name.substring(seperator + 1).trim();
+                            if (type.startsWith("List")) {
+                                int index = type.indexOf('<');
+                                String subtype = index > 0 ? type.substring(index + 1, type.indexOf('>')) : "String";
+                                type = "List<" + subtype.trim() + ">";
+                            }
+                            vc = ValueCreatorUtil.forType(type);
+                            name = name.substring(0, seperator).trim();
+                        }
+                        Parameter attribute = attributes.get(name);
                         if (attribute != null) {
                             if (!allowDuplicateAttributes) {
-                                throw MESSAGES.illegalArgumentDuplicateAttribute(unquoted);
+                                throw MESSAGES.illegalArgumentDuplicateAttribute(name);
                             }
                         } else {
-                            attribute = new AbstractParameter();
-                            attributes.put(unquoted, attribute);
+                            attribute = new AbstractParameter(vc);
+                            attributes.put(name, attribute);
                         }
-                        attribute.addValue(unquote(value));
+                        value = unquote(value.trim());
+                        attribute.addValue(value);
                     } else {
                         throw MESSAGES.illegalArgumentPathShouldAppearBefore(piece, clause);
                     }

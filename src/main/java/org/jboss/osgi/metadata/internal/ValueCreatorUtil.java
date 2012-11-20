@@ -28,14 +28,39 @@ package org.jboss.osgi.metadata.internal;
 public class ValueCreatorUtil {
     public static StringValueCreator STRING_VC = new StringValueCreator();
     public static IntegerValueCreator INTEGER_VC = new IntegerValueCreator();
+    public static LongValueCreator LONG_VC = new LongValueCreator();
+    public static DoubleValueCreator DOUBLE_VC = new DoubleValueCreator();
     public static BooleanValueCreator BOOLEAN_VC = new BooleanValueCreator();
     public static VersionValueCreator VERSION_VC = new VersionValueCreator();
     public static VersionRangeValueCreator VERSION_RANGE_VC = new VersionRangeValueCreator();
     public static URLValueCreator URL_VC = new URLValueCreator();
     public static StringListValueCreator STRING_LIST_VC = new StringListValueCreator();
+    public static VersionListValueCreator VERSION_LIST_VC = new VersionListValueCreator();
+    public static LongListValueCreator LONG_LIST_VC = new LongListValueCreator();
+    public static DoubleListValueCreator DOUBLE_LIST_VC = new DoubleListValueCreator();
     public static ParameterizedAttributeValueCreator PARAM_ATTRIB_VC = new ParameterizedAttributeValueCreator();
     public static ParameterizedAttributeListValueCreator QNAME_ATTRIB_LIST_VC = new QNameAttributeListValueCreator();
     public static ParameterizedAttributeListValueCreator NATIVE_CODE_ATTRIB_LIST_VC = new NativeCodeAttributeListValueCreator();
     public static PackageAttributeListValueCreator PACKAGE_LIST_VC = new PackageAttributeListValueCreator();
     public static ActivationPolicyMDValueCreator ACTIVATION_POLICY_VC = new ActivationPolicyMDValueCreator();
+    
+    public static ValueCreator<?> forType(String type) {
+        ValueCreator<?> result = STRING_VC;
+        if ("Version".equals(type)) {
+            result = VERSION_VC;
+        } else if ("Long".equals(type)) {
+            result = LONG_VC;
+        } else if ("Double".equals(type)) {
+            result = DOUBLE_VC;
+        } else if ("List<Version>".equals(type)) {
+            result = VERSION_LIST_VC;
+        } else if ("List<Long>".equals(type)) {
+            result = LONG_LIST_VC;
+        } else if ("List<Double>".equals(type)) {
+            result = DOUBLE_LIST_VC;
+        } else if ("List<String>".equals(type)) {
+            result = STRING_LIST_VC;
+        }
+        return result;
+    }
 }

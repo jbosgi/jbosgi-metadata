@@ -19,26 +19,29 @@
  */
 package org.jboss.osgi.metadata.internal;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.jboss.osgi.metadata.spi.ElementParser;
+import org.osgi.framework.Version;
 
 /**
- * Split string into list of strings.
+ * Split string into list of versions.
  * 
- * @author <a href="mailto:ales.justin@jboss.com">Ales Justin</a>
+ * @author Thomas.Diesler@jboss.com
  */
-class StringListValueCreator extends ListValueCreator<String> {
+class VersionListValueCreator extends ListValueCreator<Version> {
 
-    public StringListValueCreator() {
-        super();
+    public VersionListValueCreator() {
+        super(true);
     }
 
-    public StringListValueCreator(boolean trim) {
-        super(trim);
-    }
-
-    public List<String> useString(String attribute) {
-        return ElementParser.parseDelimitedString(attribute, ',', false);
+    public List<Version> useString(String attribute) {
+        List<String> parts = ElementParser.parseDelimitedString(attribute, ',');
+        Version[] result = new Version[parts.size()];
+        for (int i = 0; i < parts.size(); i++) {
+            result[i] = Version.parseVersion(parts.get(i));
+        }
+        return Arrays.asList(result);
     }
 }

@@ -21,6 +21,7 @@ package org.jboss.osgi.metadata.internal;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 import org.jboss.osgi.metadata.Parameter;
 
@@ -30,14 +31,18 @@ import org.jboss.osgi.metadata.Parameter;
  * @author <a href="mailto:ales.justin@jboss.com">Ales Justin</a>
  */
 public class AbstractParameter implements Parameter {
-    protected Collection<String> values;
 
-    public AbstractParameter() {
-        values = new HashSet<String>();
+    private final Collection<String> values;
+    private final ValueCreator<?> vc;
+
+    public AbstractParameter(ValueCreator<?> vc) {
+        this.values = new HashSet<String>();
+        this.vc = vc;
     }
 
-    public AbstractParameter(String parameter) {
-        values = new HashSet<String>();
+    public AbstractParameter(ValueCreator<?> vc, String parameter) {
+        this.values = new LinkedHashSet<String>();
+        this.vc = vc;
         addValue(parameter);
     }
 
@@ -48,10 +53,9 @@ public class AbstractParameter implements Parameter {
     public Object getValue() {
         if (values.isEmpty())
             return null;
-        else if (values.size() == 1)
-            return values.iterator().next();
-        else
-            return values;
+        String result = values.toString();
+        result = result.substring(1, result.length() - 1);
+        return vc.createValue(result);
     }
 
     public boolean isCollection() {

@@ -49,7 +49,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
@@ -74,8 +76,8 @@ public final class OSGiManifestBuilder implements Asset {
     private final Map<String, String> dynamicImportPackages = new LinkedHashMap<String, String>();
     private final Map<String, String> requiredBundles = new LinkedHashMap<String, String>();
     private final Map<String, String> requiredEnvironments = new LinkedHashMap<String, String>();
-    private final Map<String, String> providedCapabilities = new LinkedHashMap<String, String>();
-    private final Map<String, String> requiredCapabilities = new LinkedHashMap<String, String>();
+    private final List<String> providedCapabilities = new ArrayList<String>();
+    private final List<String> requiredCapabilities = new ArrayList<String>();
     private Manifest manifest;
 
     public static OSGiManifestBuilder newInstance() {
@@ -281,14 +283,14 @@ public final class OSGiManifestBuilder implements Asset {
 
     public OSGiManifestBuilder addProvidedCapabilities(String... capabilities) {
         for (String entry : capabilities) {
-            addEntry(providedCapabilities, entry);
+            providedCapabilities.add(entry);
         }
         return this;
     }
 
     public OSGiManifestBuilder addRequiredCapabilities(String... capabilities) {
         for (String entry : capabilities) {
-            addEntry(requiredCapabilities, entry);
+            requiredCapabilities.add(entry);
         }
         return this;
     }
@@ -336,7 +338,19 @@ public final class OSGiManifestBuilder implements Asset {
                 buffer.append(i++ > 0 ? "," : "");
                 buffer.append(entry);
             }
-            delegate.append(header + ": " + buffer);
+            delegate.addManifestHeader(header, buffer.toString());
+        }
+    }
+
+    private void addManifestHeader(String header, List<String> source) {
+        if (source.size() > 0) {
+            int i = 0;
+            StringBuffer buffer = new StringBuffer();
+            for (String entry : source) {
+                buffer.append(i++ > 0 ? "," : "");
+                buffer.append(entry);
+            }
+            delegate.addManifestHeader(header, buffer.toString());
         }
     }
 

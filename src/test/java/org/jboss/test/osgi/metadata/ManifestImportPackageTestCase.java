@@ -40,7 +40,7 @@ import org.osgi.framework.VersionRange;
  * @author thomas.diesler@jboss.com
  * @since 04-Oct-2012
  */
-public class ManifestParserTestCase {
+public class ManifestImportPackageTestCase {
 
     @Test
     public void testPackageAttributes() {

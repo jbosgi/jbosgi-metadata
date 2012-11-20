@@ -22,9 +22,11 @@ package org.jboss.osgi.metadata;
 import static org.jboss.osgi.metadata.MetadataLogger.LOGGER;
 import static org.jboss.osgi.metadata.MetadataMessages.MESSAGES;
 
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.jar.Attributes;
@@ -46,6 +48,8 @@ public final class OSGiMetaDataBuilder {
     private Map<String, String> exportPackages = new LinkedHashMap<String, String>();
     private Map<String, String> requiredBundles = new LinkedHashMap<String, String>();
     private Map<String, String> dynamicImportPackages = new LinkedHashMap<String, String>();
+    private final List<String> providedCapabilities = new ArrayList<String>();
+    private final List<String> requiredCapabilities = new ArrayList<String>();
 
     public static OSGiMetaDataBuilder createBuilder(String symbolicName) {
         if (symbolicName == null)
@@ -226,6 +230,19 @@ public final class OSGiMetaDataBuilder {
         return this;
     }
 
+    public OSGiMetaDataBuilder addProvidedCapabilities(String... capabilities) {
+        for (String entry : capabilities) {
+            providedCapabilities.add(entry);
+        }
+        return this;
+    }
+
+    public OSGiMetaDataBuilder addRequiredCapabilities(String... capabilities) {
+        for (String entry : capabilities) {
+            requiredCapabilities.add(entry);
+        }
+        return this;
+    }
     public OSGiMetaDataBuilder addMainAttribute(String key, String value) {
         metadata.addMainAttribute(key, value);
         return this;
@@ -256,6 +273,8 @@ public final class OSGiMetaDataBuilder {
         addManifestHeader(Constants.IMPORT_PACKAGE, importPackages);
         addManifestHeader(Constants.REQUIRE_BUNDLE, requiredBundles);
         addManifestHeader(Constants.DYNAMICIMPORT_PACKAGE, dynamicImportPackages);
+        addManifestHeader(Constants.PROVIDE_CAPABILITY, providedCapabilities);
+        addManifestHeader(Constants.REQUIRE_CAPABILITY, requiredCapabilities);
         return metadata;
     }
 
@@ -271,6 +290,18 @@ public final class OSGiMetaDataBuilder {
         }
     }
 
+    private void addManifestHeader(String header, List<String> source) {
+        if (source.size() > 0) {
+            int i = 0;
+            StringBuffer buffer = new StringBuffer();
+            for (String entry : source) {
+                buffer.append(i++ > 0 ? "," : "");
+                buffer.append(entry);
+            }
+            metadata.addMainAttribute(header, buffer.toString());
+        }
+    }
+    
     public OSGiMetaData getOSGiMetaData() {
         return getMetaDataInternal();
     }

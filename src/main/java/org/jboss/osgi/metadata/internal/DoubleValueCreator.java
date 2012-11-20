@@ -19,26 +19,21 @@
  */
 package org.jboss.osgi.metadata.internal;
 
-import java.util.List;
-
-import org.jboss.osgi.metadata.spi.ElementParser;
-
 /**
- * Split string into list of strings.
+ * Parse double from string.
  * 
- * @author <a href="mailto:ales.justin@jboss.com">Ales Justin</a>
+ * @author Thomas.Diesler@jboss.com
  */
-class StringListValueCreator extends ListValueCreator<String> {
-
-    public StringListValueCreator() {
+class DoubleValueCreator extends AbstractValueCreator<Double> {
+    public DoubleValueCreator() {
         super();
     }
 
-    public StringListValueCreator(boolean trim) {
+    public DoubleValueCreator(boolean trim) {
         super(trim);
     }
 
-    public List<String> useString(String attribute) {
-        return ElementParser.parseDelimitedString(attribute, ',', false);
+    public Double useString(String attribute) {
+        return Double.valueOf(attribute);
     }
 }

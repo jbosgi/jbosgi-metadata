@@ -19,26 +19,28 @@
  */
 package org.jboss.osgi.metadata.internal;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.jboss.osgi.metadata.spi.ElementParser;
 
 /**
- * Split string into list of strings.
+ * Split string into list of long.
  * 
- * @author <a href="mailto:ales.justin@jboss.com">Ales Justin</a>
+ * @author Thomas.Diesler@jboss.com
  */
-class StringListValueCreator extends ListValueCreator<String> {
+class LongListValueCreator extends ListValueCreator<Long> {
 
-    public StringListValueCreator() {
-        super();
+    public LongListValueCreator() {
+        super(true);
     }
 
-    public StringListValueCreator(boolean trim) {
-        super(trim);
-    }
-
-    public List<String> useString(String attribute) {
-        return ElementParser.parseDelimitedString(attribute, ',', false);
+    public List<Long> useString(String attribute) {
+        List<String> parts = ElementParser.parseDelimitedString(attribute, ',');
+        Long[] result = new Long[parts.size()];
+        for (int i = 0; i < parts.size(); i++) {
+            result[i] = Long.valueOf(parts.get(i));
+        }
+        return Arrays.asList(result);
     }
 }
