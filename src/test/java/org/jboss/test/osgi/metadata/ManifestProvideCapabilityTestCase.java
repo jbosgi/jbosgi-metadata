@@ -46,7 +46,7 @@ import org.osgi.framework.Version;
 public class ManifestProvideCapabilityTestCase {
 
     @Test
-    public void testProvideCpability() throws Exception {
+    public void testProvideCapability() throws Exception {
         OSGiManifestBuilder builder = OSGiManifestBuilder.newInstance();
         builder.addBundleManifestVersion(2);
         builder.addBundleSymbolicName("some.name");
@@ -90,7 +90,7 @@ public class ManifestProvideCapabilityTestCase {
         List<String> strings = Arrays.asList("aString", "bString", "cString");
         Assert.assertEquals(strings, atts.get(keys.get(8)).getValue());
         Assert.assertEquals("string.list2", keys.get(9));
-        strings = Arrays.asList("a\\\"quote", "a\\,comma", " aSpace ", "\\\"start", "\\,start", "end\\\"", "end\\,");
+        strings = Arrays.asList("a\"quote", "a,comma", " aSpace ", "\"start", ",start", "end\"", "end,");
         Assert.assertEquals(strings, atts.get(keys.get(9)).getValue());
         Assert.assertEquals("string.list3", keys.get(10));
         strings = Arrays.asList(" aString ", " bString ", " cString ");

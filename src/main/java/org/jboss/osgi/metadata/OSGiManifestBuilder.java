@@ -53,6 +53,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -218,14 +219,14 @@ public final class OSGiManifestBuilder implements Asset {
         }
         return this;
     }
-    
+
     public OSGiManifestBuilder addDynamicImportPackages(Package... imported) {
         for (Package aux : imported) {
             addDynamicImportPackage(aux.getName());
         }
         return this;
     }
-    
+
     public OSGiManifestBuilder addDynamicImportPackages(String... imported) {
         for (String entry : imported) {
             addDynamicImportPackage(entry);
@@ -288,11 +289,36 @@ public final class OSGiManifestBuilder implements Asset {
         return this;
     }
 
+    public OSGiManifestBuilder addProvidedCapability(String namespace, Map<String, String> atts, Map<String, String> dirs) {
+        providedCapabilities.add(getCapabilitySpec(namespace, atts, dirs));
+        return this;
+    }
+
     public OSGiManifestBuilder addRequiredCapabilities(String... capabilities) {
         for (String entry : capabilities) {
             requiredCapabilities.add(entry);
         }
         return this;
+    }
+
+    public OSGiManifestBuilder addRequiredCapability(String namespace, Map<String, String> atts, Map<String, String> dirs) {
+        requiredCapabilities.add(getCapabilitySpec(namespace, atts, dirs));
+        return this;
+    }
+
+    private String getCapabilitySpec(String namespace, Map<String, String> atts, Map<String, String> dirs) {
+        StringBuffer buffer = new StringBuffer(namespace);
+        if (atts != null && !atts.isEmpty()) {
+            for (Entry<String, String> entry : atts.entrySet()) {
+                buffer.append(";" + entry.getKey() + "=\"" + entry.getValue() + "\"");
+            }
+        }
+        if (dirs != null && !dirs.isEmpty()) {
+            for (Entry<String, String> entry : dirs.entrySet()) {
+                buffer.append(";" + entry.getKey() + ":=\"" + entry.getValue() + "\"");
+            }
+        }
+        return buffer.toString();
     }
 
     // Strip attributes/directives to avoid duplicates

@@ -70,7 +70,7 @@ public final class ElementParser {
 
             boolean isDelimiter = (delim == c) && (p != '\\');
             boolean isQuote = ((c == '"') || (c == '\'')) && (p != '\\');
-
+            
             if (isDelimiter && ((expecting & DELIMITER) > 0)) {
                 addPart(list, sb, trim);
                 sb.delete(0, sb.length());

@@ -19,6 +19,7 @@
  */
 package org.jboss.osgi.metadata.internal;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.osgi.metadata.spi.ElementParser;
@@ -39,6 +40,12 @@ class StringListValueCreator extends ListValueCreator<String> {
     }
 
     public List<String> useString(String attribute) {
-        return ElementParser.parseDelimitedString(attribute, ',', false);
+        List<String> parts = ElementParser.parseDelimitedString(attribute, ',', false);
+        List<String> result = new ArrayList<String>(parts.size());
+        StringValueCreator valueCreator = new StringValueCreator();
+        for (String part : parts) {
+            result.add(valueCreator.createValue(part));
+        }
+        return result;
     }
 }

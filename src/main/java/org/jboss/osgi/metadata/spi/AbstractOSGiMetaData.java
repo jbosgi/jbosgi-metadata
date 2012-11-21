@@ -47,7 +47,9 @@ import static org.osgi.framework.Constants.DYNAMICIMPORT_PACKAGE;
 import static org.osgi.framework.Constants.EXPORT_PACKAGE;
 import static org.osgi.framework.Constants.FRAGMENT_HOST;
 import static org.osgi.framework.Constants.IMPORT_PACKAGE;
+import static org.osgi.framework.Constants.PROVIDE_CAPABILITY;
 import static org.osgi.framework.Constants.REQUIRE_BUNDLE;
+import static org.osgi.framework.Constants.REQUIRE_CAPABILITY;
 
 import java.net.URL;
 import java.util.Collections;
@@ -213,12 +215,12 @@ public abstract class AbstractOSGiMetaData implements OSGiMetaData {
 
     @Override
     public List<ParameterizedAttribute> getProvidedCapabilities() {
-        return get("Provide-Capability", QNAME_ATTRIB_LIST_VC);
+        return get(PROVIDE_CAPABILITY, QNAME_ATTRIB_LIST_VC);
     }
 
     @Override
     public List<ParameterizedAttribute> getRequiredCapabilities() {
-        return get("Require-Capability", QNAME_ATTRIB_LIST_VC);
+        return get(REQUIRE_CAPABILITY, QNAME_ATTRIB_LIST_VC);
     }
 
     @Override

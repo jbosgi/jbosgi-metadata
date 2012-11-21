@@ -34,6 +34,8 @@ class StringValueCreator extends AbstractValueCreator<String> {
     }
 
     protected String useString(String attibute) {
-        return attibute;
+        String result = attibute.replace("\\\"", "\"");
+        result = result.replace("\\,", ",");
+        return result;
     }
 }
