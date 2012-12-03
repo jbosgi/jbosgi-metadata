@@ -158,9 +158,14 @@ public final class OSGiMetaDataBuilder {
         // Note, in R3 and R4 there is no common mandatory header
         String bundleName = metaData.getBundleName();
         String bundleSymbolicName = metaData.getBundleSymbolicName();
-        Version bundleVersion = metaData.getBundleVersion();
+        Version bundleVersion = null;
+		try {
+			bundleVersion = metaData.getBundleVersion();
+		} catch (IllegalArgumentException ex) {
+			// ignore
+		}
 
-        if (bundleName == null && bundleSymbolicName == null && bundleVersion.equals(Version.emptyVersion))
+        if (bundleName == null && bundleSymbolicName == null && bundleVersion == null)
             return -1;
 
         Integer manifestVersion = metaData.getBundleManifestVersion();

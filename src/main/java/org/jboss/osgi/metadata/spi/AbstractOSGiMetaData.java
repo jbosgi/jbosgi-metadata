@@ -167,7 +167,7 @@ public abstract class AbstractOSGiMetaData implements OSGiMetaData {
     public Version getBundleVersion() {
         try {
             return get(BUNDLE_VERSION, VERSION_VC, Version.emptyVersion);
-        } catch (NumberFormatException ex) {
+        } catch (IllegalArgumentException ex) {
             int manifestVersion = getBundleManifestVersion();
             if (manifestVersion < 2) {
                 // Install expected to succeed on invalid Bundle-Version for R3 bundle
