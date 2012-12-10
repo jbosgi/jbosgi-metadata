@@ -32,6 +32,7 @@ import org.jboss.osgi.metadata.OSGiMetaDataBuilder;
 import org.jboss.osgi.metadata.PackageAttribute;
 import org.jboss.osgi.metadata.Parameter;
 import org.junit.Test;
+import org.osgi.framework.Version;
 import org.osgi.framework.VersionRange;
 
 /**
@@ -44,20 +45,23 @@ public class ManifestImportPackageTestCase {
 
     @Test
     public void testPackageAttributes() {
-        verifyPackageSpec("org.osgi.service.blueprint;version=\"[1.0.0,2.0.0)\"");
-        verifyPackageSpec("org.osgi.service.blueprint; version='[1.0.0,2.0.0)'");
+        verifyImportPackageSpec("org.osgi.service.blueprint;version=\"[1.0.0,2.0.0)\"");
+        verifyImportPackageSpec("org.osgi.service.blueprint; version='[1.0.0,2.0.0)'");
+        verifyExportPackageSpec("org.osgi.service.blueprint;version=\"1.0.0\"");
+        verifyExportPackageSpec("org.osgi.service.blueprint; version='1.0.0'");
+        verifyExportPackageSpec("org.osgi.service.blueprint; version=1.0.0");
     }
 
     @Test
     public void testOtherPackageAttributes() {
-        verifyOtherPackageSpec("org.osgi.service.blueprint;atts=xxx", "xxx");
-        verifyOtherPackageSpec("org.osgi.service.blueprint;atts=\"xxx,yyy\"", "xxx,yyy");
-        verifyOtherPackageSpec("org.osgi.service.blueprint;atts='xxx,yyy'", "xxx,yyy");
-        verifyOtherPackageSpec("org.osgi.service.blueprint;atts=\"xxx'yyy\"", "xxx'yyy");
-        verifyOtherPackageSpec("org.osgi.service.blueprint;atts='xxx\"yyy\"'", "xxx\"yyy\"");
+        verifyOtherImportPackageSpec("org.osgi.service.blueprint;atts=xxx", "xxx");
+        verifyOtherImportPackageSpec("org.osgi.service.blueprint;atts=\"xxx,yyy\"", "xxx,yyy");
+        verifyOtherImportPackageSpec("org.osgi.service.blueprint;atts='xxx,yyy'", "xxx,yyy");
+        verifyOtherImportPackageSpec("org.osgi.service.blueprint;atts=\"xxx'yyy\"", "xxx'yyy");
+        verifyOtherImportPackageSpec("org.osgi.service.blueprint;atts='xxx\"yyy\"'", "xxx\"yyy\"");
     }
 
-    private void verifyOtherPackageSpec(String packagespec, Object expected) {
+    private void verifyOtherImportPackageSpec(String packagespec, Object expected) {
         OSGiManifestBuilder builder = OSGiManifestBuilder.newInstance();
         builder.addBundleManifestVersion(2);
         builder.addBundleSymbolicName("some.name");
@@ -73,7 +77,7 @@ public class ManifestImportPackageTestCase {
         Assert.assertEquals(expected, param.getValue());
     }
 
-    private void verifyPackageSpec(String packagespec) {
+    private void verifyImportPackageSpec(String packagespec) {
         OSGiManifestBuilder builder = OSGiManifestBuilder.newInstance();
         builder.addBundleManifestVersion(2);
         builder.addBundleSymbolicName("some.name");
@@ -86,5 +90,21 @@ public class ManifestImportPackageTestCase {
         PackageAttribute pattr = packages.get(0);
         Assert.assertEquals("org.osgi.service.blueprint", pattr.getPackageName());
         Assert.assertEquals(new VersionRange("[1,2)"), pattr.getVersion());
+    }
+
+
+    private void verifyExportPackageSpec(String packagespec) {
+        OSGiManifestBuilder builder = OSGiManifestBuilder.newInstance();
+        builder.addBundleManifestVersion(2);
+        builder.addBundleSymbolicName("some.name");
+        builder.addExportPackage(packagespec);
+        Manifest manifest = builder.getManifest();
+
+        OSGiMetaData metadata = OSGiMetaDataBuilder.load(manifest);
+        List<PackageAttribute> packages = metadata.getExportPackages();
+        Assert.assertEquals(1, packages.size());
+        PackageAttribute pattr = packages.get(0);
+        Assert.assertEquals("org.osgi.service.blueprint", pattr.getPackageName());
+        Assert.assertEquals(new VersionRange("1.0.0"), pattr.getVersion());
     }
 }

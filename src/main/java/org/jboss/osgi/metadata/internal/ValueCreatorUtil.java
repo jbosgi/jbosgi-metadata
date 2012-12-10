@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,11 +19,12 @@
  */
 package org.jboss.osgi.metadata.internal;
 
+
 /**
  * ValueCreator holder.
- * 
+ *
  * @author <a href="mailto:ales.justin@jboss.com">Ales Justin</a>
- * @author David Bosschaert
+ * @author Thomas.Diesler@jboss.com
  */
 public class ValueCreatorUtil {
     public static StringValueCreator STRING_VC = new StringValueCreator();
@@ -43,7 +44,7 @@ public class ValueCreatorUtil {
     public static ParameterizedAttributeListValueCreator NATIVE_CODE_ATTRIB_LIST_VC = new NativeCodeAttributeListValueCreator();
     public static PackageAttributeListValueCreator PACKAGE_LIST_VC = new PackageAttributeListValueCreator();
     public static ActivationPolicyMDValueCreator ACTIVATION_POLICY_VC = new ActivationPolicyMDValueCreator();
-    
+
     public static ValueCreator<?> forType(String type) {
         ValueCreator<?> result = STRING_VC;
         if ("Version".equals(type)) {
