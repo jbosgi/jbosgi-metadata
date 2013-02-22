@@ -34,6 +34,9 @@ import java.util.jar.Manifest;
 
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
+import org.osgi.framework.Filter;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.Version;
 
 /**
@@ -43,13 +46,14 @@ import org.osgi.framework.Version;
  * @since 04-Jun-2010
  */
 public final class OSGiMetaDataBuilder {
-    private DynamicMetaDataInternal metadata;
-    private Map<String, String> importPackages = new LinkedHashMap<String, String>();
-    private Map<String, String> exportPackages = new LinkedHashMap<String, String>();
-    private Map<String, String> requiredBundles = new LinkedHashMap<String, String>();
-    private Map<String, String> dynamicImportPackages = new LinkedHashMap<String, String>();
+    private final Map<String, String> importPackages = new LinkedHashMap<String, String>();
+    private final Map<String, String> exportPackages = new LinkedHashMap<String, String>();
+    private final Map<String, String> requiredBundles = new LinkedHashMap<String, String>();
+    private final Map<String, String> dynamicImportPackages = new LinkedHashMap<String, String>();
+    private final List<String> requiredEnvironments = new ArrayList<String>();
     private final List<String> providedCapabilities = new ArrayList<String>();
     private final List<String> requiredCapabilities = new ArrayList<String>();
+    private DynamicMetaDataInternal metadata;
 
     public static OSGiMetaDataBuilder createBuilder(String symbolicName) {
         if (symbolicName == null)
@@ -214,6 +218,13 @@ public final class OSGiMetaDataBuilder {
         return this;
     }
 
+    public OSGiMetaDataBuilder addRequiredExecutionEnvironments(String... envspecs) {
+        for (String envspec : envspecs) {
+            requiredEnvironments.add(envspec);
+        }
+        return this;
+    }
+
     public OSGiMetaDataBuilder addDynamicImportPackages(Class<?>... packages) {
         for (Class<?> aux : packages) {
             addDynamicImportPackages(aux.getPackage().getName());
@@ -273,10 +284,123 @@ public final class OSGiMetaDataBuilder {
         }
     }
 
+    /**
+     * Convert the deprecated Bundle-RequiredExecutionEnvironment header to the R5 osgi.ee format
+     */
+    public static Filter convertExecutionEnvironmentHeader(List<String> envspecs) {
+        if (envspecs == null || envspecs.size() < 1)
+            throw MESSAGES.illegalArgumentNull("envspecs");
+
+        String filterspec = "";
+        for (String envspec : envspecs) {
+            StringBuffer namepart = new StringBuffer();
+            StringBuffer versionpart = new StringBuffer();
+            convertExecutionEnvironmentHeader(envspec, namepart, versionpart);
+
+            String specpart = "(osgi.ee=" + namepart + ")";
+            if (versionpart.length() > 0) {
+                specpart = "(&" + specpart + "(version=" + versionpart + "))";
+            }
+
+            try {
+                FrameworkUtil.createFilter(specpart);
+                filterspec += specpart;
+            } catch (InvalidSyntaxException ex) {
+                throw MESSAGES.illegalArgumentCannotParseRequiredExecutionEnvironment(ex, envspec);
+            }
+        }
+
+        if (envspecs.size() > 1) {
+            filterspec = "(|" + filterspec + ")";
+        }
+
+        try {
+            return FrameworkUtil.createFilter(filterspec);
+        } catch (InvalidSyntaxException ex) {
+            throw MESSAGES.illegalArgumentCannotParseRequiredExecutionEnvironment(ex, envspecs.toString());
+        }
+    }
+
+    /**
+     * Convert the deprecated Bundle-RequiredExecutionEnvironment header to the R5 osgi.ee format
+     */
+    public static void convertExecutionEnvironmentHeader(String envspec, StringBuffer namepart, StringBuffer versionpart) {
+
+        // bree ::= n1 ( ’-’ v )? ( ’/’ n2 ( ’-’ v )? )?
+        // For example:
+        //    CDC-1.0/Foundation-1.0
+        //    OSGi/Minimum-1.2
+        //    J2SE-1.4
+        //    JavaSE-1.4
+
+        String[] parts = envspec.split("/");
+        String n1;
+        String v1 = null;
+        String n2 = null;
+        String v2 = null;
+        String p1 = parts[0];
+        int dashindex = p1.indexOf('-');
+        if (dashindex > 0) {
+            n1 = p1.substring(0, dashindex);
+            v1 = p1.substring(dashindex + 1);
+            try {
+                Version.parseVersion(v1);
+            } catch (IllegalArgumentException ex) {
+                n1 = p1;
+                v1 = null;
+            }
+        } else {
+            n1 = p1;
+        }
+
+        // n1 must be replaced with JavaSE when it is J2SE
+        if (n1.equals("J2SE"))
+            n1 = "JavaSE";
+
+        if (parts.length > 1) {
+            String p2 = parts[1];
+            dashindex = p2.indexOf('-');
+            if (dashindex > 0) {
+                n2 = p2.substring(0, dashindex);
+                v2 = p2.substring(dashindex + 1);
+                try {
+                    Version.parseVersion(v2);
+                } catch (IllegalArgumentException ex) {
+                    n2 = p2;
+                    v2 = null;
+                }
+                if (v1 != null && v2 != null && !v1.equals(v2)) {
+                    n1 = p1;
+                    v1 = null;
+                    n2 = p2;
+                    v2 = null;
+                }
+            } else {
+                n2 = p2;
+            }
+        }
+
+        String eename = n1 + (n2 != null ? "/" + n2 : "");
+        if (namepart != null) {
+            namepart.append(eename);
+        }
+        String filterspec = "(osgi.ee=" + eename + ")";
+
+        String version = v1 != null ? v1 : v2;
+        if (version != null) {
+            filterspec = "(&" + filterspec + "(version=" + version + "))";
+            if (versionpart != null) {
+                versionpart.append(version);
+            }
+        }
+    }
+
+    @SuppressWarnings("deprecation")
     private OSGiMetaData getMetaDataInternal() {
         addManifestHeader(Constants.EXPORT_PACKAGE, exportPackages);
         addManifestHeader(Constants.IMPORT_PACKAGE, importPackages);
         addManifestHeader(Constants.REQUIRE_BUNDLE, requiredBundles);
+        addManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT, requiredEnvironments);
         addManifestHeader(Constants.DYNAMICIMPORT_PACKAGE, dynamicImportPackages);
         addManifestHeader(Constants.PROVIDE_CAPABILITY, providedCapabilities);
         addManifestHeader(Constants.REQUIRE_CAPABILITY, requiredCapabilities);
@@ -306,7 +430,7 @@ public final class OSGiMetaDataBuilder {
             metadata.addMainAttribute(header, buffer.toString());
         }
     }
-    
+
     public OSGiMetaData getOSGiMetaData() {
         return getMetaDataInternal();
     }

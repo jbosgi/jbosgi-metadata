@@ -87,4 +87,7 @@ public interface MetadataMessages {
 
     @Message(id = 10715, value = "Cannot append to already existing manifest")
     IllegalStateException illegalStateCannotAppendToExistingManifest();
+
+    @Message(id = 10716, value = "Cannot parse required execution environment: %s")
+    IllegalArgumentException illegalArgumentCannotParseRequiredExecutionEnvironment(@Cause Throwable cause, String envspec);
 }
