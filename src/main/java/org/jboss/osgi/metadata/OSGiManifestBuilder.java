@@ -131,6 +131,12 @@ public final class OSGiManifestBuilder implements Asset {
         return this;
     }
 
+    @SuppressWarnings("deprecation")
+    public OSGiManifestBuilder addRequiredExecutionEnvironment(String execenv) {
+        delegate.append(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT + ": " + execenv);
+        return this;
+    }
+
     public OSGiManifestBuilder addFragmentHost(String fragmentHost) {
         delegate.append(Constants.FRAGMENT_HOST + ": " + fragmentHost);
         return this;
