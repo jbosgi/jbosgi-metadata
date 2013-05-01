@@ -93,6 +93,10 @@ public final class OSGiMetaDataBuilder {
             Attributes.Name name = new Attributes.Name((String) key);
             mainAttributes.put(name, props.get(key));
         }
+        if (mainAttributes.getValue(Constants.BUNDLE_MANIFESTVERSION) == null) {
+            Attributes.Name name = new Attributes.Name(Constants.BUNDLE_MANIFESTVERSION);
+            mainAttributes.put(name, "2");
+        }
         return load(manifest);
     }
 
