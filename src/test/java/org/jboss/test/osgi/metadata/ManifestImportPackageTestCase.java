@@ -32,7 +32,6 @@ import org.jboss.osgi.metadata.OSGiMetaDataBuilder;
 import org.jboss.osgi.metadata.PackageAttribute;
 import org.jboss.osgi.metadata.Parameter;
 import org.junit.Test;
-import org.osgi.framework.Version;
 import org.osgi.framework.VersionRange;
 
 /**
