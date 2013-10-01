@@ -19,6 +19,7 @@
  */
 package org.jboss.osgi.metadata.internal;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -28,11 +29,17 @@ import java.util.List;
  * @author <a href="mailto:ales.justin@jboss.com">Ales Justin</a>
  */
 abstract class ListValueCreator<T> extends AbstractValueCreator<List<T>> {
+
     protected ListValueCreator() {
         super();
     }
 
     protected ListValueCreator(boolean trim) {
         super(trim);
+    }
+
+    @Override
+    public List<T> createValue(String attribute) {
+        return attribute != null ? super.createValue(attribute) : Collections.<T>emptyList();
     }
 }

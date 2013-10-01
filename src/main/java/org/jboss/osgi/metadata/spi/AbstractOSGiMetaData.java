@@ -263,9 +263,8 @@ public abstract class AbstractOSGiMetaData implements OSGiMetaData {
             T value = (T) cachedAttributes.get(key);
             if (value == null) {
                 String attribute = getMainAttribute(key);
-                if (attribute != null) {
-                    value = creator.createValue(attribute);
-                } else if (defaultValue != null) {
+                value = creator.createValue(attribute);
+                if (attribute == null && defaultValue != null) {
                     value = defaultValue;
                 }
                 if (value != null)
