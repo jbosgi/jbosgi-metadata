@@ -34,7 +34,7 @@
     <artifactId>jbosgi-metadata</artifactId>
     <packaging>jar</packaging>
 
-    <version>4.0.0.CR1-SNAPSHOT</version>
+    <version>4.0.0.CR1</version>
 
     <!-- Source -->
     <scm>
