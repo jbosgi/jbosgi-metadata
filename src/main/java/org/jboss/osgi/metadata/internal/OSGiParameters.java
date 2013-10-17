@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,6 @@
  */
 package org.jboss.osgi.metadata.internal;
 
-import static org.jboss.osgi.metadata.MetadataLogger.LOGGER;
 import static org.osgi.framework.Constants.BUNDLE_SYMBOLICNAME_ATTRIBUTE;
 import static org.osgi.framework.Constants.BUNDLE_VERSION_ATTRIBUTE;
 import static org.osgi.framework.Constants.RESOLUTION_DIRECTIVE;
@@ -32,17 +31,20 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 import org.jboss.osgi.metadata.Parameter;
 import org.osgi.framework.VersionRange;
 
 /**
  * OSGi parameter values. Util for transforming parameter info to actual useful values.
- * 
+ *
  * @author <a href="mailto:ales.justin@jboss.com">Ales Justin</a>
  * @author Thomas.Diesler@jboss.com
  */
 public class OSGiParameters {
+
+    static final Logger LOGGER = Logger.getLogger(OSGiParameters.class.getName());
 
     protected Map<String, Parameter> parameters;
     protected Map<String, Object> cachedAttributes;
@@ -92,7 +94,7 @@ public class OSGiParameters {
                         CollectionValueCreator<T> cvc = (CollectionValueCreator<T>) creator;
                         value = cvc.createValue((Collection<String>) paramValue);
                     } else {
-                        LOGGER.warnCannotCreateValueForParameter(creator, parameter);
+                        LOGGER.warning("Cannot create value from " + creator + " for parameter: " + parameter);
                     }
                 } else {
                     value = creator.createValue(paramValue.toString());

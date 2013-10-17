@@ -19,8 +19,6 @@
  */
 package org.jboss.osgi.metadata.internal;
 
-import static org.jboss.osgi.metadata.MetadataMessages.MESSAGES;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,6 +28,7 @@ import org.jboss.osgi.metadata.PackageAttribute;
 import org.jboss.osgi.metadata.Parameter;
 import org.jboss.osgi.metadata.ParameterizedAttribute;
 import org.jboss.osgi.metadata.spi.ElementParser;
+import org.jboss.osgi.metadata.spi.NotNullException;
 
 /**
  * ManifestParser.
@@ -77,8 +76,9 @@ public class ManifestParser {
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void parse(String header, List list, boolean packages, boolean allowDuplicateAttributes) {
-        if (header == null || header.length() == 0)
-            throw MESSAGES.illegalArgumentNull("header");
+        NotNullException.assertValue(header, "header");
+        if (header.length() == 0)
+            throw new IllegalArgumentException("Invalid null header");
 
         // Split the header into clauses using which are seperated by commas
         // Like this: path; path; dir1:=dirval1; dir2:=dirval2; attr1=attrval1; attr2=attrval2,
@@ -99,7 +99,7 @@ public class ManifestParser {
                 paths.add(unquote(piece));
             }
             if (paths.isEmpty())
-                throw MESSAGES.illegalArgumentNoPathsForClause(clause);
+                throw new IllegalArgumentException("No paths for clause: " + clause);
 
             Map<String, Parameter> directives = null;
             Map<String, Parameter> attributes = null;
@@ -114,7 +114,7 @@ public class ManifestParser {
                         directives = new LinkedHashMap<String, Parameter>();
                     name = unquote(name.trim());
                     if (directives.containsKey(name))
-                        throw MESSAGES.illegalArgumentDuplicateDirective(name);
+                        throw new IllegalArgumentException("Duplicate directive: " + name);
                     value = unquote(value.trim());
                     directives.put(name, new AbstractParameter(ValueCreatorUtil.STRING_VC, value));
                 } else {
@@ -140,7 +140,7 @@ public class ManifestParser {
                         Parameter attribute = attributes.get(name);
                         if (attribute != null) {
                             if (!allowDuplicateAttributes) {
-                                throw MESSAGES.illegalArgumentDuplicateAttribute(name);
+                                throw new IllegalArgumentException("Duplicate attribute: " + name);
                             }
                         } else {
                             attribute = new AbstractParameter(vc);
@@ -149,7 +149,7 @@ public class ManifestParser {
                         value = unquote(value.trim());
                         attribute.addValue(value);
                     } else {
-                        throw MESSAGES.illegalArgumentPathShouldAppearBefore(piece, clause);
+                        throw new IllegalArgumentException("Path [" + piece + "] should appear before attributes and directives in clause: " + clause);
                     }
                 }
             }

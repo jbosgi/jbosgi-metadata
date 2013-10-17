@@ -19,9 +19,9 @@
  */
 package org.jboss.osgi.metadata;
 
-import static org.jboss.osgi.metadata.MetadataMessages.MESSAGES;
-
 import java.io.Serializable;
+
+import org.jboss.osgi.metadata.spi.NotNullException;
 
 /**
  * Meta data for native code libraries as defined by OSGi R4V42.
@@ -44,8 +44,7 @@ public class NativeLibrary implements Serializable {
      * @param libraryPath The library path
      */
     public NativeLibrary(String libraryPath) {
-        if (libraryPath == null)
-            throw MESSAGES.illegalArgumentNull("libraryPath");
+        NotNullException.assertValue(libraryPath, "libraryPath");
         this.libraryPath = libraryPath;
     }
 

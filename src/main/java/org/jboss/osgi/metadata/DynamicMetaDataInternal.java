@@ -19,8 +19,6 @@
  */
 package org.jboss.osgi.metadata;
 
-import static org.jboss.osgi.metadata.MetadataMessages.MESSAGES;
-
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -31,6 +29,7 @@ import java.util.Map;
 import java.util.jar.Attributes.Name;
 
 import org.jboss.osgi.metadata.spi.AbstractOSGiMetaData;
+import org.jboss.osgi.metadata.spi.NotNullException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 
@@ -46,10 +45,8 @@ class DynamicMetaDataInternal extends AbstractOSGiMetaData implements Externaliz
     private Map<Name, String> attributes = new LinkedHashMap<Name, String>();
 
     DynamicMetaDataInternal(String symbolicName, Version version) {
-        if (symbolicName == null)
-            throw MESSAGES.illegalArgumentNull("symbolicName");
-        if (version == null)
-            throw MESSAGES.illegalArgumentNull("version");
+        NotNullException.assertValue(symbolicName, "symbolicName");
+        NotNullException.assertValue(version, "version");
         addMainAttribute(Constants.BUNDLE_MANIFESTVERSION, "2");
         addMainAttribute(Constants.BUNDLE_SYMBOLICNAME, symbolicName);
         addMainAttribute(Constants.BUNDLE_VERSION, version.toString());

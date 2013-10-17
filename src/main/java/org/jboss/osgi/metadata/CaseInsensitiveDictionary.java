@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,8 +18,6 @@
  * #L%
  */
 package org.jboss.osgi.metadata;
-
-import static org.jboss.osgi.metadata.MetadataMessages.MESSAGES;
 
 import java.util.Collections;
 import java.util.Dictionary;
@@ -31,9 +29,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import org.jboss.osgi.metadata.spi.NotNullException;
+
 /**
  * CaseInsensitiveDictionary.
- * 
+ *
  * @author <a href="adrian@jboss.com">Adrian Brock</a>
  * @author Thomas.Diesler@jboss.com
  */
@@ -49,13 +49,12 @@ public class CaseInsensitiveDictionary extends Hashtable {
 
     /**
      * Create a new CaseInsensitiveDictionary.
-     * 
+     *
      * @param delegate the delegate
      */
     @SuppressWarnings("unchecked")
     public CaseInsensitiveDictionary(Dictionary delegate) {
-        if (delegate == null)
-            throw MESSAGES.illegalArgumentNull("delegate");
+        NotNullException.assertValue(delegate, "delegate");
 
         this.delegate = new Hashtable<String, Object>(delegate.size());
         this.originalKeys = Collections.synchronizedSet(new HashSet<String>());
@@ -63,7 +62,7 @@ public class CaseInsensitiveDictionary extends Hashtable {
         while (e.hasMoreElements()) {
             String key = e.nextElement();
             if (get(key) != null)
-                throw MESSAGES.illegalArgumentDuplicatesForKey(key, delegate);
+                throw new IllegalArgumentException("Duplicates with varying case for key [" + key + "] : " + delegate);
 
             this.delegate.put(key.toLowerCase(Locale.ENGLISH), delegate.get(key));
             originalKeys.add(key);

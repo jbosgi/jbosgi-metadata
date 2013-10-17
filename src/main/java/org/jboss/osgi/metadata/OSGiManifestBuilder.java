@@ -42,8 +42,7 @@
  */
 package org.jboss.osgi.metadata;
 
-import static org.jboss.osgi.metadata.MetadataLogger.LOGGER;
-import static org.jboss.osgi.metadata.MetadataMessages.MESSAGES;
+import static org.jboss.osgi.metadata.ManifestBuilder.LOGGER;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -57,6 +56,7 @@ import java.util.Map.Entry;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
+import org.jboss.osgi.metadata.spi.NotNullException;
 import org.jboss.shrinkwrap.api.asset.Asset;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
@@ -337,7 +337,7 @@ public final class OSGiManifestBuilder implements Asset {
         if (target.get(key) == null) {
             target.put(key, entry);
         } else {
-            LOGGER.warnIgnoreDuplicateEntry(entry);
+            LOGGER.fine("Ignore duplicate manifest entry: " + entry);
         }
     }
 
@@ -411,8 +411,7 @@ public final class OSGiManifestBuilder implements Asset {
      * @throws BundleException if the given manifest is not a valid OSGi manifest
      */
     public static void validateBundleManifest(Manifest manifest) throws BundleException {
-        if (manifest == null)
-            MESSAGES.illegalArgumentNull("manifest");
+        NotNullException.assertValue(manifest, "manifest");
 
         // A bundle manifest must express the version of the OSGi manifest header
         // syntax in the Bundle-ManifestVersion header. Bundles exploiting this version
@@ -423,18 +422,18 @@ public final class OSGiManifestBuilder implements Asset {
         // express this in such manifests.
         int manifestVersion = getBundleManifestVersion(manifest);
         if (manifestVersion < 0)
-            throw MESSAGES.bundleCannotObtainBundleManifestVersion();
+            throw new BundleException("Cannot determine Bundle-ManifestVersion");
         if (manifestVersion > 2)
-            throw MESSAGES.bundleUnsupportedBundleManifestVersion(manifestVersion);
+            throw new BundleException("Unsupported Bundle-ManifestVersion: " + manifestVersion);
 
         // R3 Framework
         String symbolicName = getManifestHeaderInternal(manifest, Constants.BUNDLE_SYMBOLICNAME);
         if (manifestVersion == 1 && symbolicName != null)
-            throw MESSAGES.bundleInvalidBundleManifestVersion(symbolicName);
+            throw new BundleException("Invalid Bundle-ManifestVersion for: " + symbolicName);
 
         // R4 Framework
         if (manifestVersion == 2 && symbolicName == null)
-            throw MESSAGES.bundleCannotObtainBundleSymbolicName();
+            throw new BundleException("Cannot obtain Bundle-SymbolicName");
 
     }
 
@@ -445,8 +444,7 @@ public final class OSGiManifestBuilder implements Asset {
      * @return The value of the Bundle-ManifestVersion header, or -1 for a non OSGi manifest
      */
     public static int getBundleManifestVersion(Manifest manifest) {
-        if (manifest == null)
-            throw MESSAGES.illegalArgumentNull("manifest");
+        NotNullException.assertValue(manifest, "manifest");
 
         String manifestVersion = getManifestHeaderInternal(manifest, Constants.BUNDLE_MANIFESTVERSION);
         if (manifestVersion != null) {
@@ -473,7 +471,7 @@ public final class OSGiManifestBuilder implements Asset {
             manifest.write(baos);
             return new ByteArrayInputStream(baos.toByteArray());
         } catch (IOException ex) {
-            throw MESSAGES.illegalStateCannotProvideManifestInputStream(ex);
+            throw new IllegalStateException("Cannot provide manifest input stream", ex);
         }
     }
 

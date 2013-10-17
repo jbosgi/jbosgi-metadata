@@ -19,8 +19,6 @@
  */
 package org.jboss.osgi.metadata.internal;
 
-import static org.jboss.osgi.metadata.MetadataMessages.MESSAGES;
-
 import java.io.Serializable;
 import java.util.Map;
 
@@ -54,7 +52,7 @@ public class AbstractPackageAttribute extends AbstractParameterizedAttribute imp
             Parameter parameter = getAttribute(Constants.VERSION_ATTRIBUTE);
             if (parameter != null) {
                 if (parameter.isCollection())
-                    throw MESSAGES.illegalArgumentDuplicateVersionParameter();
+                    throw new IllegalArgumentException("Duplicate version parameter");
                 Object value = parameter.getValue();
                 if (value != null) {
                     versionRange = new VersionRange(value.toString());

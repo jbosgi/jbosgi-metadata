@@ -19,9 +19,6 @@
  */
 package org.jboss.osgi.metadata;
 
-import static org.jboss.osgi.metadata.MetadataLogger.LOGGER;
-import static org.jboss.osgi.metadata.MetadataMessages.MESSAGES;
-
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
@@ -31,7 +28,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
+import java.util.logging.Logger;
 
+import org.jboss.osgi.metadata.spi.NotNullException;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Filter;
@@ -46,6 +45,9 @@ import org.osgi.framework.Version;
  * @since 04-Jun-2010
  */
 public final class OSGiMetaDataBuilder {
+
+    static final Logger LOGGER = Logger.getLogger(OSGiMetaDataBuilder.class.getName());
+
     private final Map<String, String> importPackages = new LinkedHashMap<String, String>();
     private final Map<String, String> exportPackages = new LinkedHashMap<String, String>();
     private final Map<String, String> requiredBundles = new LinkedHashMap<String, String>();
@@ -56,22 +58,18 @@ public final class OSGiMetaDataBuilder {
     private DynamicMetaDataInternal metadata;
 
     public static OSGiMetaDataBuilder createBuilder(String symbolicName) {
-        if (symbolicName == null)
-            throw MESSAGES.illegalArgumentNull("symbolicName");
+        NotNullException.assertValue(symbolicName, "symbolicName");
         return new OSGiMetaDataBuilder(symbolicName, Version.emptyVersion);
     }
 
     public static OSGiMetaDataBuilder createBuilder(String symbolicName, Version version) {
-        if (symbolicName == null)
-            throw MESSAGES.illegalArgumentNull("symbolicName");
-        if (version == null)
-            throw MESSAGES.illegalArgumentNull("version");
+        NotNullException.assertValue(symbolicName, "symbolicName");
+        NotNullException.assertValue(version, "version");
         return new OSGiMetaDataBuilder(symbolicName, version);
     }
 
     public static OSGiMetaDataBuilder createBuilder(Dictionary<String, String> headers) {
-        if (headers == null)
-            throw MESSAGES.illegalArgumentNull("headers");
+        NotNullException.assertValue(headers, "headers");
         String symbolicName = headers.get(Constants.BUNDLE_SYMBOLICNAME);
         Version version = Version.parseVersion(headers.get(Constants.BUNDLE_VERSION));
         OSGiMetaDataBuilder builder = new OSGiMetaDataBuilder(symbolicName, version);
@@ -85,8 +83,7 @@ public final class OSGiMetaDataBuilder {
     }
 
     public static OSGiMetaData load(Properties props) {
-        if (props == null)
-            throw MESSAGES.illegalArgumentNull("props");
+        NotNullException.assertValue(props, "props");
         Manifest manifest = new Manifest();
         Attributes mainAttributes = manifest.getMainAttributes();
         for (Object key : props.keySet()) {
@@ -101,8 +98,7 @@ public final class OSGiMetaDataBuilder {
     }
 
     public static OSGiMetaData load(Manifest manifest) {
-        if (manifest == null)
-            throw MESSAGES.illegalArgumentNull("manifest");
+        NotNullException.assertValue(manifest, "manifest");
         return new ManifestMetaDataInternal(manifest);
     }
 
@@ -130,8 +126,7 @@ public final class OSGiMetaDataBuilder {
      * @throws BundleException if the given metadata is not a valid
      */
     public static void validateMetadata(OSGiMetaData metadata) throws BundleException {
-        if (metadata == null)
-            throw MESSAGES.illegalArgumentNull("metadata");
+        NotNullException.assertValue(metadata, "metadata");
 
         // A bundle manifest must express the version of the OSGi manifest header
         // syntax in the Bundle-ManifestVersion header. Bundles exploiting this version
@@ -143,20 +138,20 @@ public final class OSGiMetaDataBuilder {
         try {
             int manifestVersion = getBundleManifestVersion(metadata);
             if (manifestVersion < 0)
-                throw MESSAGES.bundleCannotObtainBundleManifestVersion();
+                throw new BundleException("Cannot determine Bundle-ManifestVersion");
             if (manifestVersion > 2)
-                throw MESSAGES.bundleUnsupportedBundleManifestVersion(manifestVersion);
+                throw new BundleException("Unsupported Bundle-ManifestVersion: " + manifestVersion);
 
             // R3 Framework
             String symbolicName = metadata.getBundleSymbolicName();
             if (manifestVersion == 1 && symbolicName != null)
-                throw MESSAGES.bundleInvalidBundleManifestVersion(symbolicName);
+                throw new BundleException("Invalid Bundle-ManifestVersion for: " + symbolicName);
 
             // R4 Framework
             if (manifestVersion == 2 && symbolicName == null)
-                throw MESSAGES.bundleCannotObtainBundleSymbolicName();
+                throw new BundleException("Cannot obtain Bundle-SymbolicName");
         } catch (RuntimeException ex) {
-            throw MESSAGES.bundleInvalidMetadata(ex);
+            throw new BundleException("Invalid OSGi metadata", ex);
         }
     }
 
@@ -284,7 +279,7 @@ public final class OSGiMetaDataBuilder {
         if (target.get(key) == null) {
             target.put(key, entry);
         } else {
-            LOGGER.warnIgnoreDuplicateEntry(entry);
+            LOGGER.fine("Ignore duplicate entry: " + entry);
         }
     }
 
@@ -292,8 +287,9 @@ public final class OSGiMetaDataBuilder {
      * Convert the deprecated Bundle-RequiredExecutionEnvironment header to the R5 osgi.ee format
      */
     public static Filter convertExecutionEnvironmentHeader(List<String> envspecs) {
-        if (envspecs == null || envspecs.size() < 1)
-            throw MESSAGES.illegalArgumentNull("envspecs");
+        NotNullException.assertValue(envspecs, "envspecs");
+        if (envspecs.size() < 1)
+            throw new IllegalArgumentException("Invalid empty envspecs");
 
         String filterspec = "";
         for (String envspec : envspecs) {
@@ -310,7 +306,7 @@ public final class OSGiMetaDataBuilder {
                 FrameworkUtil.createFilter(specpart);
                 filterspec += specpart;
             } catch (InvalidSyntaxException ex) {
-                throw MESSAGES.illegalArgumentCannotParseRequiredExecutionEnvironment(ex, envspec);
+                throw new IllegalArgumentException("Cannot parse required execution environment: " + envspec, ex);
             }
         }
 
@@ -321,7 +317,7 @@ public final class OSGiMetaDataBuilder {
         try {
             return FrameworkUtil.createFilter(filterspec);
         } catch (InvalidSyntaxException ex) {
-            throw MESSAGES.illegalArgumentCannotParseRequiredExecutionEnvironment(ex, envspecs.toString());
+            throw new IllegalArgumentException("Cannot parse required execution environment: " + envspecs, ex);
         }
     }
 

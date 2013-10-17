@@ -19,8 +19,6 @@
  */
 package org.jboss.osgi.metadata.spi;
 
-import static org.jboss.osgi.metadata.MetadataMessages.MESSAGES;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +36,7 @@ public final class ElementParser {
     public static List<String> parseDelimitedString(String value, char delim) {
         return parseDelimitedString(value, delim, true);
     }
-    
+
 	/**
      * Parses delimited string and returns an array containing the tokens. This parser obeys quotes, so the delimiter character
      * will be ignored if it is inside of a quote. This method assumes that the quote character is not included in the set of
@@ -70,7 +68,7 @@ public final class ElementParser {
 
             boolean isDelimiter = (delim == c) && (p != '\\');
             boolean isQuote = ((c == '"') || (c == '\'')) && (p != '\\');
-            
+
             if (isDelimiter && ((expecting & DELIMITER) > 0)) {
                 addPart(list, sb, trim);
                 sb.delete(0, sb.length());
@@ -84,7 +82,7 @@ public final class ElementParser {
             } else if ((expecting & CHAR) > 0) {
                 sb.append(c);
             } else {
-                throw MESSAGES.illegalArgumentInvalidDelimitedString(value, delim);
+                throw new IllegalArgumentException("Invalid delimited string [" + value + "] for delimiter: " + delim);
             }
         }
 
