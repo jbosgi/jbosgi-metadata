@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.jar.Manifest;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.jboss.osgi.metadata.OSGiManifestBuilder;
 import org.jboss.osgi.metadata.OSGiMetaData;

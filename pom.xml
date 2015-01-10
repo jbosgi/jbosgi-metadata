@@ -20,13 +20,14 @@
   -->
 
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.jboss.osgi</groupId>
         <artifactId>jbosgi-parent</artifactId>
-        <version>1.0.23</version>
+        <version>1.0.25</version>
     </parent>
 
     <name>JBossOSGi Metadata</name>
@@ -34,7 +35,7 @@
     <artifactId>jbosgi-metadata</artifactId>
     <packaging>jar</packaging>
 
-    <version>4.0.0.CR2-SNAPSHOT</version>
+    <version>4.0.0.Final</version>
 
     <!-- Source -->
     <scm>
@@ -43,33 +44,22 @@
         <url>http://github.com/jbosgi/jbosgi-metadata</url>
     </scm>
 
-    <!-- Properties -->
-    <properties>
-        <version.jboss.shrinkwrap>1.0.0</version.jboss.shrinkwrap>
-        <version.junit>4.10</version.junit>
-        <version.osgi.core>5.0.0</version.osgi.core>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.jboss.shrinkwrap</groupId>
             <artifactId>shrinkwrap-api</artifactId>
-            <version>${version.jboss.shrinkwrap}</version>
         </dependency>
         
         <!-- Provided Dependencies -->
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
-            <version>${version.osgi.core}</version>
         </dependency>
         
         <!-- Test Dependencies -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${version.junit}</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -101,5 +91,5 @@
             <url>https://repository.jboss.org/nexus/content/groups/public/</url>
         </repository>
     </repositories>
-    
+
 </project>
