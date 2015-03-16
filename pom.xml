@@ -35,13 +35,14 @@
     <artifactId>jbosgi-metadata</artifactId>
     <packaging>jar</packaging>
 
-    <version>4.0.0.Final</version>
+    <version>4.0.0.Final-SNAPSHOT</version>
 
     <!-- Source -->
     <scm>
         <connection>scm:git:git://github.com/jbosgi/jbosgi-metadata.git</connection>
         <developerConnection>scm:git:git@github.com:jbosgi/jbosgi-metadata.git</developerConnection>
         <url>http://github.com/jbosgi/jbosgi-metadata</url>
+        <tag>HEAD</tag>
     </scm>
 
     <dependencies>
@@ -49,13 +50,13 @@
             <groupId>org.jboss.shrinkwrap</groupId>
             <artifactId>shrinkwrap-api</artifactId>
         </dependency>
-        
+
         <!-- Provided Dependencies -->
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
         </dependency>
-        
+
         <!-- Test Dependencies -->
         <dependency>
             <groupId>junit</groupId>
@@ -63,7 +64,7 @@
         </dependency>
     </dependencies>
 
-	<!-- Build -->
+    <!-- Build -->
     <build>
         <plugins>
             <plugin>
