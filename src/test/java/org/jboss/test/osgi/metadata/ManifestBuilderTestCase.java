@@ -22,6 +22,7 @@
 package org.jboss.test.osgi.metadata;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -48,6 +49,35 @@ public class ManifestBuilderTestCase {
         builder.addManifestHeader(Constants.EXPORT_PACKAGE, "org.jboss.test.osgi.example.webapp");
         builder.addManifestHeader(Constants.IMPORT_PACKAGE, importPackages);
         Manifest manifest = builder.getManifest();
+        Assert.assertNotNull("Manifest not null", manifest);
+
+        Attributes attributes = manifest.getMainAttributes();
+        String value = attributes.getValue(Constants.EXPORT_PACKAGE);
+        Assert.assertEquals("org.jboss.test.osgi.example.webapp", value);
+        value = attributes.getValue(Constants.IMPORT_PACKAGE);
+        Assert.assertEquals(importPackages, value);
+    }
+
+    /**
+     * JBOSGI-780
+     * @throws IOException
+     */
+    @Test
+    public void testWindowsNewLine() throws IOException {
+        int testLength = 511 - Constants.IMPORT_PACKAGE.length() - 2;
+        char [] line = new char[testLength];
+        Arrays.fill(line, 'a');
+        String importPackages = new String(line);
+
+        ManifestBuilder builder = ManifestBuilder.newInstance();
+        builder.addManifestHeader(Constants.BUNDLE_MANIFESTVERSION, "2");
+        builder.addManifestHeader(Constants.BUNDLE_SYMBOLICNAME, "example-webapp-negative");
+        builder.addManifestHeader(Constants.EXPORT_PACKAGE, "org.jboss.test.osgi.example.webapp");
+        builder.addManifestHeader(Constants.IMPORT_PACKAGE, importPackages);
+        String oldLineSep = System.getProperty("line.separator");
+        System.setProperty("line.separator", "\r\n");
+        Manifest manifest = builder.getManifest();
+        System.setProperty("line.separator", oldLineSep);
         Assert.assertNotNull("Manifest not null", manifest);
 
         Attributes attributes = manifest.getMainAttributes();

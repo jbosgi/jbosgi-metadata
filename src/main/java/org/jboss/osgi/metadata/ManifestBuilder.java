@@ -86,11 +86,13 @@ public final class ManifestBuilder implements Asset {
 
     public Manifest getManifest() {
         if (manifest == null) {
+            // JBOSGI-780
+            int maxLineLength = 512 - System.getProperty("line.separator").length();
             StringWriter out = new StringWriter();
             PrintWriter pw = new PrintWriter(out);
             for(String line : lines) {
                 byte[] bytes = line.getBytes();
-                while (bytes.length >= 512) {
+                while (bytes.length > maxLineLength) {
                     byte[] head = Arrays.copyOf(bytes, 256);
                     bytes = Arrays.copyOfRange(bytes, 256, bytes.length);
                     pw.println(new String(head));
